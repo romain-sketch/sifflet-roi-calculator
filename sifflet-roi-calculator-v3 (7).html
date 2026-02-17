@@ -1,0 +1,2957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sifflet ROI Calculator | Quantify Your Data Observability Value</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            /* Sifflet Brand Colors - Official */
+            --razzmatazz: #E40166;
+            --white: #FFFFFF;
+            --ocean-blue-start: #004383;
+            --ocean-blue-end: #002D68;
+            --dark-blue: #030F22;
+            --mint-tea: #44E8A7;
+            --sunset: #FC923F;
+            --blue-sky: #62C9FF;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8A90A0;
+            --bg-dark: #030F22;
+            --bg-card: #0A1628;
+            --border-subtle: #1E2939;
+            --success: #44E8A7;
+            --warning: #FC923F;
+            --danger: #E40166;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Header - Sifflet Style */
+        .header {
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--ocean-blue-end));
+            border-radius: 6px;
+        }
+        
+        .progress-container {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 48px;
+        }
+        
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .progress-step {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .progress-step.active {
+            color: var(--mint-tea);
+        }
+        
+        .progress-bar {
+            height: 3px;
+            background: var(--border-subtle);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ocean-blue-start), var(--mint-tea));
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+        }
+        
+        /* Introduction Section */
+        .intro-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        .intro-hero {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        
+        .intro-hero h1 {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        
+        .intro-subtitle {
+            font-size: 22px;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .methodology-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 48px;
+            margin-bottom: 48px;
+        }
+        
+        .methodology-header {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+        
+        .methodology-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+        }
+        
+        .methodology-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .methodology-header h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+        
+        .methodology-desc {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Iceberg Metaphor */
+        .iceberg-metaphor {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 56px;
+            align-items: center;
+        }
+        
+        .iceberg-visual {
+            background: linear-gradient(180deg, rgba(98, 201, 255, 0.1) 0%, rgba(0, 67, 131, 0.1) 50%, rgba(18, 25, 34, 0.3) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 32px;
+            position: relative;
+        }
+        
+        .iceberg-top {
+            background: rgba(98, 201, 255, 0.15);
+            border: 2px solid #62C9FF;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .iceberg-label {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .iceberg-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .water-line-static {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--mint-tea), transparent);
+            margin: 16px 0;
+        }
+        
+        .iceberg-bottom {
+            background: rgba(228, 1, 102, 0.1);
+            border: 2px solid var(--razzmatazz);
+            border-radius: 12px;
+            padding: 48px 24px;
+            text-align: center;
+        }
+        
+        .iceberg-explanation h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .iceberg-explanation p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        /* Modules Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 56px;
+        }
+        
+        .module-card {
+            background: var(--bg-dark);
+            border: 2px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 32px;
+            transition: all 0.3s;
+        }
+        
+        .module-card:hover {
+            border-color: var(--ocean-blue-start);
+            transform: translateY(-4px);
+        }
+        
+        .module-highlight {
+            border-color: var(--razzmatazz);
+            background: linear-gradient(135deg, rgba(228, 1, 102, 0.05), rgba(0, 67, 131, 0.05));
+        }
+        
+        .module-highlight:hover {
+            border-color: var(--razzmatazz);
+        }
+        
+        .module-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--razzmatazz));
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        
+        .module-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .module-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        
+        .module-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        
+        .module-list li {
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .module-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--mint-tea);
+        }
+        
+        .module-impact {
+            padding: 12px;
+            background: rgba(68, 232, 167, 0.1);
+            border-left: 3px solid var(--mint-tea);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--mint-tea);
+        }
+        
+        /* Why Matters */
+        .why-matters {
+            margin-bottom: 48px;
+        }
+        
+        .why-matters h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .reasons-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        
+        .reason-item {
+            display: flex;
+            gap: 16px;
+            padding: 24px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+        }
+        
+        .reason-icon {
+            font-size: 40px;
+            flex-shrink: 0;
+        }
+        
+        .reason-content h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .reason-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* Sources */
+        .sources-section {
+            background: rgba(0, 67, 131, 0.05);
+            border: 1px solid var(--ocean-blue-start);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .sources-section h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .sources-section > p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .sources-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .source-badge {
+            padding: 8px 16px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        /* CTA Intro */
+        .cta-intro {
+            text-align: center;
+            padding: 48px;
+            background: linear-gradient(135deg, rgba(0, 67, 131, 0.1), rgba(228, 1, 102, 0.05));
+            border: 2px solid var(--ocean-blue-start);
+            border-radius: 16px;
+        }
+        
+        .cta-intro h3 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+        
+        .cta-intro > p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+        
+        .btn-large {
+            padding: 20px 48px;
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .btn-large svg {
+            transition: transform 0.2s;
+        }
+        
+        .btn-large:hover svg {
+            transform: translateX(4px);
+        }
+        
+        .time-estimate {
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Responsive Intro */
+        @media (max-width: 968px) {
+            .intro-hero h1 {
+                font-size: 40px;
+            }
+            
+            .iceberg-metaphor {
+                grid-template-columns: 1fr;
+            }
+            
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .reasons-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+        
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 64px;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--mint-tea) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+        
+        .hero-highlight {
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--razzmatazz));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+        
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        .card h2 {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        
+        .card-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            font-size: 16px;
+            font-weight: 400;
+        }
+        
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--razzmatazz));
+            color: white;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--border-subtle);
+            color: var(--text-secondary);
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: help;
+            font-weight: 700;
+            position: relative;
+        }
+        
+        .info-icon::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark-blue);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 400;
+            white-space: nowrap;
+            max-width: 300px;
+            white-space: normal;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            line-height: 1.4;
+        }
+        
+        .info-icon::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: var(--dark-blue);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+        
+        .info-icon:hover::after,
+        .info-icon:hover::before {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        input, select {
+            padding: 14px 16px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--ocean-blue-start);
+            box-shadow: 0 0 0 3px rgba(0, 67, 131, 0.1);
+        }
+        
+        select {
+            cursor: pointer;
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border-subtle);
+            outline: none;
+            padding: 0;
+            border: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--mint-tea));
+            cursor: pointer;
+            border: 3px solid var(--bg-card);
+            box-shadow: 0 4px 12px rgba(68, 232, 167, 0.4);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--mint-tea));
+            cursor: pointer;
+            border: 3px solid var(--bg-card);
+            box-shadow: 0 4px 12px rgba(68, 232, 167, 0.4);
+        }
+        
+        .range-value {
+            font-weight: 700;
+            color: var(--mint-tea);
+            margin-top: 10px;
+            font-size: 15px;
+        }
+        
+        /* Industry Cards */
+        .industry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .industry-card {
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg-dark);
+            text-align: center;
+        }
+        
+        .industry-card:hover {
+            border-color: var(--ocean-blue-start);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 67, 131, 0.3);
+        }
+        
+        .industry-card.selected {
+            border-color: var(--mint-tea);
+            background: linear-gradient(135deg, rgba(0, 67, 131, 0.15), rgba(68, 232, 167, 0.1));
+            box-shadow: 0 8px 24px rgba(68, 232, 167, 0.3);
+        }
+        
+        .industry-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .industry-icon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 4px 12px rgba(18, 25, 34, 0.3));
+        }
+        
+        .industry-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        
+        .industry-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+        
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 40px;
+        }
+        
+        button {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--razzmatazz));
+            color: white;
+            box-shadow: 0 4px 16px rgba(228, 1, 102, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(228, 1, 102, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--ocean-blue-start);
+            background: rgba(0, 67, 131, 0.1);
+        }
+        
+        /* Checkbox */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg-dark);
+        }
+        
+        .checkbox-item:hover {
+            border-color: var(--ocean-blue-start);
+            background: rgba(0, 67, 131, 0.05);
+        }
+        
+        .checkbox-item.checked {
+            border-color: var(--mint-tea);
+            background: rgba(68, 232, 167, 0.1);
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+            accent-color: var(--mint-tea);
+        }
+        
+        .checkbox-content {
+            flex: 1;
+        }
+        
+        .checkbox-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+        
+        .checkbox-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        /* Results */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+        
+        .metric-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--ocean-blue-start), var(--mint-tea));
+        }
+        
+        .metric-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .metric-value {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--mint-tea));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+        
+        .metric-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+        
+        /* Iceberg */
+        .iceberg-container {
+            background: linear-gradient(180deg, rgba(0, 67, 131, 0.1) 0%, var(--bg-card) 50%, var(--bg-dark) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 48px;
+            margin-bottom: 48px;
+            position: relative;
+        }
+        
+        .iceberg-title-main {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+        
+        .water-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 40%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--mint-tea), transparent);
+            animation: wave 3s ease-in-out infinite;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        
+        .iceberg-section {
+            margin-bottom: 32px;
+            padding: 24px;
+            background: var(--bg-dark);
+            border-radius: 12px;
+            border-left: 4px solid var(--ocean-blue-start);
+        }
+        
+        .iceberg-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .iceberg-value {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--mint-tea));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+        
+        .iceberg-items {
+            list-style: none;
+        }
+        
+        .iceberg-items li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        
+        .iceberg-items li:last-child {
+            border-bottom: none;
+        }
+        
+        .iceberg-item-value {
+            font-weight: 700;
+            color: var(--mint-tea);
+        }
+        
+        /* Timeline */
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+        
+        .timeline-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 28px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .timeline-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--ocean-blue-start), var(--razzmatazz));
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .timeline-year {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .timeline-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .timeline-value {
+            font-size: 38px;
+            font-weight: 800;
+            color: var(--success);
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+        
+        .timeline-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* CTA */
+        .cta-banner {
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--razzmatazz));
+            border-radius: 16px;
+            padding: 56px 48px;
+            text-align: center;
+            margin-top: 48px;
+        }
+        
+        .cta-banner h3 {
+            font-size: 36px;
+            margin-bottom: 16px;
+            font-weight: 800;
+        }
+        
+        .cta-banner p {
+            font-size: 18px;
+            margin-bottom: 32px;
+            opacity: 0.95;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-cta {
+            background: white;
+            color: var(--ocean-blue-start);
+            padding: 18px 40px;
+            font-size: 17px;
+            font-weight: 700;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-cta-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid white;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Lead Capture */
+        .lead-capture-box {
+            background: linear-gradient(135deg, rgba(0, 67, 131, 0.1), rgba(228, 1, 102, 0.05));
+            border: 2px solid var(--ocean-blue-start);
+            border-radius: 16px;
+            padding: 48px;
+            margin: 48px 0;
+            text-align: center;
+        }
+        
+        .lock-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            filter: grayscale(1) opacity(0.6);
+        }
+        
+        .lead-capture-box h3 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+        
+        .lead-capture-box > p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+        
+        .benefits-list {
+            text-align: left;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            list-style: none;
+            padding: 0;
+        }
+        
+        .benefits-list li {
+            padding: 12px 0;
+            font-size: 15px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .email-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .form-row input,
+        .form-row select {
+            width: 100%;
+        }
+        
+        .btn-unlock {
+            width: 100%;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, var(--ocean-blue-start), var(--razzmatazz));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn-unlock:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(228, 1, 102, 0.4);
+        }
+        
+        .btn-unlock svg {
+            transition: transform 0.2s;
+        }
+        
+        .btn-unlock:hover svg {
+            transform: translateX(4px);
+        }
+        
+        .privacy-note {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+        }
+        
+        /* Warning Box */
+        .warning-box {
+            background: rgba(252, 146, 63, 0.1);
+            border: 2px solid var(--sunset);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 40px 0;
+        }
+        
+        .warning-title {
+            font-weight: 700;
+            color: var(--sunset);
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        
+        .warning-text {
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        .warning-text strong {
+            color: var(--sunset);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 48px 32px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 40px;
+            }
+            
+            .progress-container {
+                display: none;
+            }
+            
+            .industry-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+
+        /* ===================== CRO + DESIGN PATCHES ===================== */
+
+        /* HERO CTA */
+        .intro-badge {
+            display: inline-block;
+            background: rgba(228,1,102,0.1); border: 1px solid rgba(228,1,102,0.3);
+            color: var(--razzmatazz); padding: 6px 18px; border-radius: 20px;
+            font-size: 13px; font-weight: 700; margin-bottom: 28px;
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        .hero-em {
+            font-style: italic;
+            background: linear-gradient(135deg, var(--razzmatazz), var(--ocean-blue-start));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .intro-cta-group { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: 36px; }
+        .btn-hero-cta {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--razzmatazz); color: white; border: none;
+            padding: 18px 40px; border-radius: 8px; font-size: 18px; font-weight: 700;
+            cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(228,1,102,0.35);
+        }
+        .btn-hero-cta:hover { background: #c40158; transform: translateY(-3px); box-shadow: 0 10px 32px rgba(228,1,102,0.5); }
+        .btn-hero-cta svg { transition: transform 0.2s; }
+        .btn-hero-cta:hover svg { transform: translateX(4px); }
+
+        /* TRUST SIGNALS */
+        .trust-signals { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-secondary); flex-wrap: wrap; justify-content: center; }
+        .trust-sep { opacity: 0.4; }
+
+        /* BOTTOM CTA ENHANCEMENTS */
+        .cta-intro-eyebrow { display: inline-block; font-size: 13px; font-weight: 600; color: var(--mint-tea); margin-bottom: 16px; }
+        .cta-intro-footnote { margin-top: 16px !important; font-size: 13px !important; color: var(--text-secondary) !important; }
+
+        /* SOCIAL PROOF HEADER BAR */
+        .social-proof-bar { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); }
+        .social-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mint-tea); flex-shrink: 0; animation: dot-pulse 2s infinite; }
+        @keyframes dot-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+        .social-proof-bar strong { color: var(--text-primary); }
+
+        /* PULSING BUTTON */
+        @keyframes btn-glow { 0%,100%{box-shadow:0 4px 16px rgba(228,1,102,0.3)} 50%{box-shadow:0 4px 32px rgba(228,1,102,0.7)} }
+        .btn-pulse { animation: btn-glow 2s ease-in-out infinite; }
+
+        /* SOURCES BAR */
+        .sources-bar { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; padding: 24px 36px; background: rgba(0,67,131,0.06); border: 1px solid rgba(0,67,131,0.2); border-radius: 12px; margin-bottom: 56px; }
+        .sources-label { font-size: 13px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .sources-divider { width: 1px; height: 18px; background: var(--border-subtle); }
+        .source-pill { padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+
+        /* 4-COL WHY GRID */
+        .reasons-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; max-width: 1100px; margin: 0 auto; }
+        .reason-item { text-align: center; padding: 32px 20px; background: transparent; transition: all 0.3s; }
+        .reason-item:hover { transform: translateY(-6px); }
+        .reason-icon { font-size: 52px; margin-bottom: 20px; display: block; line-height: 1; }
+        .reason-content h4 { font-size: 19px; font-weight: 700; margin-bottom: 12px; }
+        .reason-content p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* SOCIAL STRIP */
+        .social-strip { display: flex; align-items: center; justify-content: center; gap: 24px; padding: 20px 32px; background: rgba(68,232,167,0.05); border: 1px solid rgba(68,232,167,0.15); border-radius: 12px; margin-bottom: 32px; flex-wrap: wrap; }
+        .social-strip-item { text-align: center; display: flex; flex-direction: column; gap: 2px; }
+        .social-strip-item strong { font-size: 22px; font-weight: 800; color: var(--mint-tea); }
+        .social-strip-item span { font-size: 12px; color: var(--text-secondary); }
+        .social-strip-sep { width: 1px; height: 32px; background: var(--border-subtle); }
+
+        /* LEAD CAPTURE */
+        .unlock-badge { display: inline-block; background: rgba(68,232,167,0.12); border: 1px solid rgba(68,232,167,0.3); color: var(--mint-tea); padding: 6px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-bottom: 16px; }
+        .lead-top h3 { font-size: 34px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.02em; }
+        .lead-sub { font-size: 16px; color: var(--text-secondary); margin-bottom: 32px; max-width: 560px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+        .lead-benefits-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 36px; max-width: 720px; margin-left: auto; margin-right: auto; }
+        .lbr-item { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+        .lbr-item span { font-size: 28px; }
+        .btn-unlock { width: 100%; padding: 20px 32px; background: var(--razzmatazz); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 20px; font-family: 'DM Sans', sans-serif; animation: btn-glow 2s ease-in-out infinite; }
+        .btn-unlock:hover { background: #c40158; transform: translateY(-2px); }
+        .trust-footer { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; font-size: 13px; color: var(--text-secondary); }
+
+        /* URGENCY BAR */
+        .results-urgency { background: rgba(252,146,63,0.08); border: 1px solid rgba(252,146,63,0.3); border-radius: 10px; padding: 16px 20px; margin-bottom: 32px; font-size: 15px; display: flex; align-items: center; gap: 12px; }
+        .results-urgency strong { color: var(--sunset); }
+
+        /* STICKY CTA */
+        .sticky-cta { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(3,15,34,0.97); border-top: 1px solid rgba(228,1,102,0.3); padding: 16px 32px; display: none; align-items: center; justify-content: space-between; z-index: 200; backdrop-filter: blur(20px); gap: 16px; flex-wrap: wrap; }
+        .sticky-cta.visible { display: flex; }
+        .sticky-cta-text { font-size: 15px; color: var(--text-secondary); }
+        .sticky-cta-text strong { color: var(--text-primary); }
+        .sticky-cta-btn { background: var(--razzmatazz); color: white; padding: 12px 28px; border-radius: 8px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: all 0.2s; }
+        .sticky-cta-btn:hover { background: #c40158; }
+
+        /* HUBSPOT FORM STYLING */
+        #hs-form-wrapper { max-width: 580px; margin: 0 auto; }
+        #hs-form-wrapper .hs-form input[type=text],
+        #hs-form-wrapper .hs-form input[type=email] { background: var(--bg-dark) !important; border: 1px solid var(--border-subtle) !important; color: var(--text-primary) !important; padding: 14px 16px !important; border-radius: 8px !important; font-size: 15px !important; font-family: 'DM Sans',sans-serif !important; width: 100% !important; box-sizing: border-box !important; }
+        #hs-form-wrapper .hs-form input:focus { border-color: var(--razzmatazz) !important; outline: none !important; box-shadow: 0 0 0 3px rgba(228,1,102,0.1) !important; }
+        #hs-form-wrapper .hs-form .hs-form-field { margin-bottom: 14px !important; }
+        #hs-form-wrapper .hs-form label { color: var(--text-secondary) !important; font-size: 13px !important; font-weight: 600 !important; margin-bottom: 6px !important; display: block !important; }
+        #hs-form-wrapper .hs-form .hs-error-msgs { color: var(--razzmatazz) !important; font-size: 12px !important; }
+        #hs-form-wrapper .hs-form .hs-button { width: 100% !important; padding: 20px 32px !important; background: var(--razzmatazz) !important; color: white !important; border: none !important; border-radius: 10px !important; font-size: 18px !important; font-weight: 700 !important; cursor: pointer !important; font-family: 'DM Sans',sans-serif !important; animation: btn-glow 2s ease-in-out infinite !important; transition: all 0.2s !important; }
+        #hs-form-wrapper .hs-form .hs-button:hover { background: #c40158 !important; transform: translateY(-2px) !important; }
+        .hs-richtext, .hs-form-boilerplate { display: none !important; }
+        .hs-form fieldset.form-columns-2 .hs-form-field { width: 50% !important; float: left !important; padding-right: 8px !important; }
+        .hs-form fieldset.form-columns-2 .hs-form-field:last-child { padding-right: 0 !important; padding-left: 8px !important; }
+        #hs-form-wrapper .submitted-message { color: var(--mint-tea) !important; font-size: 20px !important; font-weight: 700 !important; text-align: center !important; padding: 32px !important; }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) { .reasons-grid { grid-template-columns: repeat(2,1fr); gap: 40px; } }
+        @media (max-width: 768px) {
+            .social-proof-bar { display: none; }
+            .reasons-grid { grid-template-columns: repeat(2,1fr); }
+            .lead-benefits-row { grid-template-columns: repeat(2,1fr); }
+            .social-strip { gap: 16px; }
+            .social-strip-sep { display: none; }
+            .btn-hero-cta { padding: 16px 28px; font-size: 16px; }
+            .hs-form fieldset.form-columns-2 .hs-form-field { width: 100% !important; float: none !important; padding: 0 !important; }
+        }
+        @media (max-width: 480px) { .reasons-grid { grid-template-columns: 1fr; } }
+
+
+        /* ===================== PRINT / PDF STYLES ===================== */
+        @media print {
+            /* Hide everything except the report */
+            header,
+            .sticky-cta,
+            #introSection,
+            #heroSection,
+            #step1, #step2, #step3, #step4, #step5,
+            .progress-container,
+            .cta-buttons,
+            .button-group,
+            [onclick*="scheduleDemo"],
+            [onclick*="downloadPDF"],
+            [onclick*="startCalculator"] {
+                display: none !important;
+            }
+
+            /* Show step6 even if hidden */
+            #step6 {
+                display: block !important;
+                visibility: visible !important;
+            }
+
+            /* Page setup */
+            @page {
+                size: A4;
+                margin: 18mm 15mm;
+            }
+
+            body {
+                background: #ffffff !important;
+                color: #0d1117 !important;
+                font-family: 'DM Sans', Arial, sans-serif;
+                font-size: 11pt;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Card: white background, subtle border */
+            .card {
+                background: #ffffff !important;
+                border: 1px solid #e0e0e0 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+                margin-bottom: 20px !important;
+                padding: 20px !important;
+            }
+
+            /* Headings */
+            h1, h2, h3, h4 {
+                color: #0d1117 !important;
+                -webkit-text-fill-color: #0d1117 !important;
+            }
+
+            /* Keep brand accent colors for values */
+            .iceberg-value,
+            .roi-number,
+            .metric-value,
+            [style*="color: var(--mint-tea)"],
+            #userCompany, #userCompany2 {
+                color: #00843d !important;
+                -webkit-text-fill-color: #00843d !important;
+            }
+
+            .roi-highlight, .value-highlight {
+                color: #c40158 !important;
+                -webkit-text-fill-color: #c40158 !important;
+            }
+
+            /* Metric cards: 2-col grid, light background */
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+            }
+            .metric-card {
+                background: #f8f8f8 !important;
+                border: 1px solid #e0e0e0 !important;
+                page-break-inside: avoid;
+            }
+
+            /* Iceberg section */
+            .iceberg-container {
+                page-break-inside: avoid;
+            }
+            .water-line {
+                border-top: 2px solid #0d1117 !important;
+                background: none !important;
+            }
+            .iceberg-section {
+                background: #f4f4f4 !important;
+                border: 1px solid #e0e0e0 !important;
+            }
+            .iceberg-items li {
+                border-bottom: 1px solid #e8e8e8 !important;
+                color: #333 !important;
+            }
+            .iceberg-item-value {
+                color: #c40158 !important;
+                -webkit-text-fill-color: #c40158 !important;
+            }
+
+            /* Year projection bars */
+            .projection-bar-fill {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Cost of inaction */
+            .inaction-box {
+                background: #fff8f0 !important;
+                border: 2px solid #f97316 !important;
+            }
+
+            /* Print header: Sifflet branding */
+            #step6::before {
+                content: "SIFFLET · Data Observability ROI Report";
+                display: block;
+                font-size: 9pt;
+                color: #888;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-bottom: 16px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #e40166;
+            }
+
+            /* Footer on each page */
+            #step6::after {
+                content: "siffletdata.com · Confidential";
+                display: block;
+                font-size: 8pt;
+                color: #aaa;
+                text-align: center;
+                margin-top: 32px;
+                padding-top: 10px;
+                border-top: 1px solid #e0e0e0;
+            }
+
+            /* Page breaks */
+            .iceberg-container,
+            .projection-section,
+            .inaction-section,
+            .recommendation-section {
+                page-break-before: auto;
+                page-break-inside: avoid;
+            }
+
+            /* Remove gradients that don't print well */
+            * {
+                text-shadow: none !important;
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+
+        /* === REAL LOGO === */
+        .logo-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-img {
+            height: 32px;
+            width: auto;
+            display: block;
+            /* Invert to white for dark header */
+            filter: brightness(0) invert(1);
+            transition: opacity 0.2s;
+        }
+        .logo-link:hover .logo-img {
+            opacity: 0.8;
+        }
+        /* Print: show logo in dark blue (no filter) */
+        @media print {
+            .logo-link { display: none; }
+        }
+
+    </style>
+    <script src="https://js.hsforms.net/forms/embed/v2.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <a href="https://www.siffletdata.com" target="_blank" rel="noopener" class="logo-link">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIzMTUgMzkwIDEzMzUgMzAwIj4KPGRlZnM+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJzaWZmbGV0X2dyYWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iNDAxLjg1IiB5MT0iNjcyLjMwIiB4Mj0iNTkxLjIxIiB5Mj0iMzczLjkxIj4KICAgIDxzdG9wIG9mZnNldD0iMCIgc3R5bGU9InN0b3AtY29sb3I6I0ZGMDA0MjtzdG9wLW9wYWNpdHk6MC41Ii8+CiAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0eWxlPSJzdG9wLWNvbG9yOiNGRjAwNDIiLz4KICA8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+CjxnPgoJCQk8cGF0aCBmaWxsPSIjMTEzRTYwIiBkPSJNODE5LjMsNTYxLjlsLTI4LjYtNi43Yy0yMS4xLTQuNy0yMy41LTE1LTIzLjUtMjIuM2MwLTEyLjYsMTEuNi0yMSwyOC44LTIxYzE1LjcsMCwzMC43LDcuNCw0NC41LDIyCgkJCQlsMy4zLDMuNWwyNC44LTI2LjNsLTMtMy4xYy0xOS42LTIwLjQtNDIuNC0zMC43LTY3LjgtMzAuN2MtMTgsMC0zMy43LDUuMS00Ni45LDE1Yy0xMy41LDEwLjItMjAuNCwyNC4zLTIwLjQsNDEuOQoJCQkJYzAsMjksMTguNSw0OC4xLDU1LjEsNTYuOGwyNy4xLDYuM2MyNSw1LjksMjUsMTcuOSwyNSwyMS45YzAsMjEtMjUuMywyMy4zLTM2LjIsMjMuM2MtMjAuNSwwLTM3LjMtOC41LTUxLjMtMjYuMWwtMy4zLTQuMQoJCQkJbC0yNC41LDI1LjVsMi40LDMuMWMxNywyMi4yLDQ2LjYsMzUuOSw3Ny4xLDM1LjljNDMuMywwLDcyLjUtMjMuNyw3Mi41LTU5LjFDODc0LjQsNTg5LjMsODU1LjgsNTcwLjUsODE5LjMsNTYxLjl6Ii8+CgkJCTxyZWN0IHg9IjkwOS41IiB5PSI0ODEuNiIgZmlsbD0iIzExM0U2MCIgd2lkdGg9IjM2LjYiIGhlaWdodD0iMTkwLjkiLz4KCQkJPHBhdGggZmlsbD0iIzExM0U2MCIgZD0iTTExMDguMiw0NzIuNXY5LjJoLTYzLjl2LTkuMmMwLTI1LjcsOC40LTM0LjcsMzIuMi0zNC43aDE0LjJ2LTMzLjhsLTE0LjYtMC41CgkJCQljLTQ1LjQsMC02OC40LDIzLjMtNjguNCw2OS4xdjkuMmgtMjkuN1Y1MTZoMjkuN3YxNTYuNWgzNi42VjUxNmg2My45djE1Ni41aDM2LjZWNTE2aDQyLjN2LTM0LjRoLTQyLjN2LTkuMgoJCQkJYzAtMjUuNyw4LjQtMzQuNywzMi4yLTM0LjdoMTQuMnYtMzMuOGwtMTQuNi0wLjVDMTEzMS4yLDQwMy40LDExMDguMiw0MjYuNiwxMTA4LjIsNDcyLjV6Ii8+CgkJCTxyZWN0IHg9IjEyMjQuNyIgeT0iNDAzLjQiIGZpbGw9IiMxMTNFNjAiIHdpZHRoPSIzNi42IiBoZWlnaHQ9IjI2OS4yIi8+CgkJCTxwYXRoIGZpbGw9IiMxMTNFNjAiIGQ9Ik0xNDMyLjcsNDkyLjZjLTEzLjQtMTAuMi0zMC0xNS40LTQ5LjUtMTUuNGMtMjYuNCwwLTQ4LDkuOS02NCwyOS41Yy0xNS41LDE4LjktMjMuMyw0My0yMy4zLDcxLjUKCQkJCWMwLDI4LjcsOC41LDUyLjYsMjUuMyw3MWMxNywxOC4yLDQwLjEsMjcuNCw2OC42LDI3LjRjMjkuMywwLDU0LjQtMTIuMyw3NC40LTM2LjVsMi44LTMuM2wtMjUuNy0yMy43bC0zLjEsMy44CgkJCQljLTEzLjcsMTYuOC0yOS41LDI1LTQ4LjQsMjVjLTMyLDAtNTIuMy0xOC44LTU2LjItNTEuN2gxMzQuOGwwLjUtMTcuMkMxNDY5LDUzNy44LDE0NTYuNyw1MTAuNywxNDMyLjcsNDkyLjZ6IE0xMzM1LjIsNTU2LjYKCQkJCWM2LTI4LjIsMjMuNS00NC4zLDQ4LjctNDQuM2MyNS43LDAsNDMuNiwxNi44LDQ3LjYsNDQuM0gxMzM1LjJ6Ii8+CgkJCTxwYXRoIGZpbGw9IiMxMTNFNjAiIGQ9Ik0xNTk0LDUxNnYtMzQuNGgtNDIuM3YtNTAuOGgtMzYuNnY1MC44aC0yOS43VjUxNmgyOS43djk4LjZjMCw0MC4xLDE4LjIsNTguNyw1Ny4yLDU4LjcKCQkJCWM2LjgsMCwxMy4yLTAuNCwxNy40LTAuOGw0LjItMC4zdi0zMy44bC0xOSwwLjVjLTE4LjMsMC0yMy4zLTYuMS0yMy4zLTI4LjRWNTE2SDE1OTR6Ii8+CgkJPC9nPgoJCTxyZWN0IHg9IjkwOS41IiB5PSI0MDMuNCIgZmlsRkYwMDQyIi8+Cgk8L2xpbmVhckdyYWRpZW50PgoJPHBhdGggZmlsbD0idXJsKCNzaWZmbGV0X2dyYWQpIiBkPSJNNDQzLjksNDM5LjVjLTY1LDAtMTE3LjksNTIuOS0xMTcuOSwxMTcuOXM1Mi45LDExNy45LDExNy45LDExNy45YzY1LDAsMTE3LjgtNTIuOSwxMTcuOC0xMTcuOXYtNzcKCQlINDQzLjljLTQyLjUsMC03NywzNC41LTc3LDc3czM0LjUsNzcsNzcsNzdjNDIuNSwwLDc3LTM0LjUsNzctNzdjMC0xMy4xLTMuMy0yNS40LTkuMS0zNi4yaC0yNC4yYzguMiw5LjgsMTMuMSwyMi41LDEzLjEsMzYuMgoJCWMwLDMxLjMtMjUuNCw1Ni44LTU2LjgsNTYuOGMtMzEuMywwLTU2LjgtMjUuNS01Ni44LTU2LjhzMjUuNS01Ni44LDU2LjgtNTYuOGg5Ny42djU2LjhjMCw1My44LTQzCjwvc3ZnPg==" alt="Sifflet" class="logo-img" />
+            </a>
+            <div class="progress-container">
+                <div class="progress-steps">
+                    <div class="progress-step" id="stepLabel1">Company</div>
+                    <div class="progress-step" id="stepLabel2">Baseline</div>
+                    <div class="progress-step" id="stepLabel3">Impact</div>
+                    <div class="progress-step" id="stepLabel4">Strategic</div>
+                    <div class="progress-step" id="stepLabel5">Results</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Hero -->
+        <div class="hero" id="heroSection">
+            <h1><span class="hero-highlight">Data Observability</span> ROI Calculator</h1>
+            <p>Quantify the business value of Sifflet beyond engineering hours saved. Discover hidden costs, mitigate risks, and unlock your AI roadmap.</p>
+        </div>
+
+        <!-- Introduction Page (Before Step 1) -->
+        <div class="intro-section" id="introSection">
+            <div class="intro-hero">
+                <div class="intro-badge">ROI Calculator</div>
+                <h1>Make Data Observability<br><em class="hero-em">Everyone's Business</em></h1>
+                <p class="intro-subtitle">Most ROI calculators only measure engineering hours saved. Ours reveals the complete financial impact — across every team, industry, and strategic priority.</p>
+                <div class="intro-cta-group">
+                    <button class="btn-hero-cta btn-pulse" onclick="startCalculator()">
+                        Calculate My ROI
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 10H15M15 10L11 6M15 10L11 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="trust-signals">
+                        <span>⏱ 3 minutes</span><span class="trust-sep">·</span>
+                        <span>🔒 No credit card</span><span class="trust-sep">·</span>
+                        <span>✓ Free report</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="methodology-card">
+                <div class="methodology-header">
+                    <div class="methodology-icon">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="method-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#004383;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#E40166;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="30" r="8" fill="#44E8A7"/>
+                            <circle cx="30" cy="60" r="8" fill="#44E8A7"/>
+                            <circle cx="70" cy="60" r="8" fill="#44E8A7"/>
+                            <circle cx="50" cy="85" r="8" fill="#44E8A7"/>
+                            <line x1="50" y1="30" x2="30" y2="60" stroke="url(#method-grad)" stroke-width="3"/>
+                            <line x1="50" y1="30" x2="70" y2="60" stroke="url(#method-grad)" stroke-width="3"/>
+                            <line x1="30" y1="60" x2="50" y2="85" stroke="url(#method-grad)" stroke-width="3"/>
+                            <line x1="70" y1="60" x2="50" y2="85" stroke="url(#method-grad)" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <h2>Our Business-Aware Methodology</h2>
+                    <p class="methodology-desc">Unlike traditional calculators that only measure "engineering hours saved," we quantify the complete value chain of data observability.</p>
+                </div>
+
+                <div class="iceberg-metaphor">
+                    <div class="iceberg-visual">
+                        <div class="iceberg-top">
+                            <div class="iceberg-label">Visible Costs (10%)</div>
+                            <div class="iceberg-content">What most ROI calculators measure</div>
+                        </div>
+                        <div class="water-line-static"></div>
+                        <div class="iceberg-bottom">
+                            <div class="iceberg-label">Hidden Business Costs (90%)</div>
+                            <div class="iceberg-content">What we help you discover</div>
+                        </div>
+                    </div>
+                    <div class="iceberg-explanation">
+                        <h3>The Iceberg Principle</h3>
+                        <p>Data quality issues create a cascade of hidden costs throughout your organization. Engineering time is just the tip of the iceberg. Below the surface lie revenue leakage, compliance risks, missed opportunities, and strategic delays that dwarf the visible costs.</p>
+                    </div>
+                </div>
+
+                <div class="modules-grid">
+                    <div class="module-card">
+                        <div class="module-number">1</div>
+                        <h3>Efficiency Baseline</h3>
+                        <p class="module-label">Engineering & Platform Layer</p>
+                        <ul class="module-list">
+                            <li>Time spent on data firefighting</li>
+                            <li>Cloud infrastructure waste</li>
+                            <li>Redundant pipeline maintenance</li>
+                        </ul>
+                        <div class="module-impact">Creates the ROI "floor"</div>
+                    </div>
+
+                    <div class="module-card module-highlight">
+                        <div class="module-number">2</div>
+                        <h3>Business Impact</h3>
+                        <p class="module-label">Industry-Specific Value Drivers</p>
+                        <ul class="module-list">
+                            <li>Revenue leakage from bad data</li>
+                            <li>Operational inefficiencies</li>
+                            <li>Customer experience degradation</li>
+                        </ul>
+                        <div class="module-impact">Where the real value lives</div>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="module-number">3</div>
+                        <h3>Strategic Value</h3>
+                        <p class="module-label">Governance & AI Readiness</p>
+                        <ul class="module-list">
+                            <li>Audit & compliance efficiency</li>
+                            <li>Regulatory risk mitigation</li>
+                            <li>AI/GenAI deployment readiness</li>
+                        </ul>
+                        <div class="module-impact">Unlocks future innovation</div>
+                    </div>
+                </div>
+
+                <div class="why-matters">
+                    <h3>Why This Approach Matters</h3>
+                    <div class="reasons-grid">
+                        <div class="reason-item">
+                            <div class="reason-icon">🎯</div>
+                            <div class="reason-content">
+                                <h4>Industry-Specific</h4>
+                                <p>ROI based on your actual business model and risk profile</p>
+                            </div>
+                        </div>
+                        <div class="reason-item">
+                            <div class="reason-icon">📊</div>
+                            <div class="reason-content">
+                                <h4>Beyond Engineering</h4>
+                                <p>Impact across Marketing, Sales, Finance, and Operations</p>
+                            </div>
+                        </div>
+                        <div class="reason-item">
+                            <div class="reason-icon">💰</div>
+                            <div class="reason-content">
+                                <h4>Board-Level Metrics</h4>
+                                <p>Revenue protection, risk mitigation, strategic enablement</p>
+                            </div>
+                        </div>
+                        <div class="reason-item">
+                            <div class="reason-icon">🚀</div>
+                            <div class="reason-content">
+                                <h4>Future-Proof</h4>
+                                <p>Quantify how observability accelerates your AI roadmap</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sources-bar">
+                    <span class="sources-label">Built on</span>
+                    <div class="sources-divider"></div>
+                    <span class="source-pill">Gartner Research</span>
+                    <span class="source-pill">Forrester TEI Studies</span>
+                    <span class="source-pill">Sifflet Customer Data</span>
+                    <span class="source-pill">Industry Benchmarks 2025</span>
+                </div>
+            </div>
+
+            <div class="cta-intro">
+                <div class="cta-intro-eyebrow">3 minutes · Free · No credit card</div>
+                <h3>Ready to Build Your Business Case?</h3>
+                <p>Get a personalized ROI report you can bring to your CFO or board — backed by Gartner benchmarks and Sifflet customer data.</p>
+                <button class="btn-hero-cta btn-pulse" onclick="startCalculator()">
+                    Calculate My ROI
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 10H15M15 10L11 6M15 10L11 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <p class="cta-intro-footnote">Trusted by 200+ data teams · Avg. result: $2.8M over 3 years</p>
+            </div>
+        </div>
+
+        <!-- Step 1: Company Profile -->
+        <div class="card" id="step1">
+            <h2><span class="step-badge">1</span> Company Profile</h2>
+            <p class="card-subtitle">Help us understand your organization and data landscape</p>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="companySize">Company Size</label>
+                    <select id="companySize">
+                        <option value="">Select size</option>
+                        <option value="startup">Startup (< 50 employees)</option>
+                        <option value="small">Small (50-200)</option>
+                        <option value="medium">Medium (200-1000)</option>
+                        <option value="large">Large (1000-5000)</option>
+                        <option value="enterprise">Enterprise (5000+)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dataTeamSize">
+                        Data Team Size (FTEs)
+                        <span class="info-icon" data-tooltip="Number of full-time data engineers, analytics engineers, and data analysts">i</span>
+                    </label>
+                    <input type="number" id="dataTeamSize" min="1" max="500" value="10" placeholder="e.g., 10" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="avgSalary">
+                        Avg. Fully Loaded Cost
+                        <span class="info-icon" data-tooltip="Total cost per employee including salary, benefits, taxes, equipment, and overhead">i</span>
+                    </label>
+                    <input type="number" id="avgSalary" min="50000" max="500000" step="10000" value="150000" placeholder="e.g., $150,000" />
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 32px;">
+                <label>Select Your Industry</label>
+                <div class="industry-grid">
+                    <div class="industry-card" data-industry="retail">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="retail-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="20" y="30" width="60" height="50" rx="8" fill="url(#retail-grad)"/>
+                                <rect x="25" y="35" width="20" height="15" rx="3" fill="#FFFFFF" opacity="0.3"/>
+                                <rect x="50" y="35" width="20" height="15" rx="3" fill="#FFFFFF" opacity="0.3"/>
+                                <rect x="25" y="55" width="20" height="15" rx="3" fill="#FFFFFF" opacity="0.3"/>
+                                <rect x="50" y="55" width="20" height="15" rx="3" fill="#FFFFFF" opacity="0.3"/>
+                                <circle cx="75" cy="25" r="8" fill="#FF015D"/>
+                                <path d="M30 20 L40 30 L30 30 Z" fill="#FF015D"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Retail</div>
+                        <div class="industry-desc">E-commerce & inventory</div>
+                    </div>
+                    <div class="industry-card" data-industry="fsi">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="fsi-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="25" y="25" width="50" height="50" rx="8" fill="url(#fsi-grad)"/>
+                                <rect x="30" y="35" width="10" height="25" rx="2" fill="#FFFFFF" opacity="0.3"/>
+                                <rect x="45" y="30" width="10" height="30" rx="2" fill="#FF015D"/>
+                                <rect x="60" y="40" width="10" height="20" rx="2" fill="#FFFFFF" opacity="0.3"/>
+                                <circle cx="35" cy="32" r="3" fill="#FF015D"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Financial Services</div>
+                        <div class="industry-desc">Banking & fintech</div>
+                    </div>
+                    <div class="industry-card" data-industry="saas">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="saas-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="20" y="25" width="60" height="45" rx="6" fill="url(#saas-grad)"/>
+                                <rect x="25" y="30" width="50" height="30" rx="3" fill="#FFFFFF" opacity="0.2"/>
+                                <rect x="20" y="70" width="60" height="5" rx="2" fill="#121922"/>
+                                <circle cx="50" cy="73" r="2" fill="#FF015D"/>
+                                <line x1="30" y1="40" x2="55" y2="40" stroke="#FF015D" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="30" y1="48" x2="65" y2="48" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">SaaS</div>
+                        <div class="industry-desc">B2B software</div>
+                    </div>
+                    <div class="industry-card" data-industry="healthcare">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="health-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="50" cy="50" r="30" fill="url(#health-grad)"/>
+                                <rect x="45" y="35" width="10" height="30" rx="2" fill="#FF015D"/>
+                                <rect x="35" y="45" width="30" height="10" rx="2" fill="#FF015D"/>
+                                <circle cx="65" cy="35" r="3" fill="#FFFFFF" opacity="0.5"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Healthcare</div>
+                        <div class="industry-desc">Providers & pharma</div>
+                    </div>
+                    <div class="industry-card" data-industry="telecom">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="telecom-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="50" cy="60" r="25" fill="url(#telecom-grad)"/>
+                                <circle cx="50" cy="60" r="18" fill="none" stroke="#FF015D" stroke-width="3"/>
+                                <circle cx="50" cy="60" r="10" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.4"/>
+                                <circle cx="50" cy="60" r="4" fill="#FF015D"/>
+                                <line x1="50" y1="30" x2="50" y2="45" stroke="#FF015D" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Telecommunications</div>
+                        <div class="industry-desc">Networks & carriers</div>
+                    </div>
+                    <div class="industry-card" data-industry="manufacturing">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="mfg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="25" y="50" width="50" height="25" rx="4" fill="url(#mfg-grad)"/>
+                                <rect x="30" y="35" width="10" height="15" rx="2" fill="#121922"/>
+                                <rect x="45" y="30" width="10" height="20" rx="2" fill="#121922"/>
+                                <rect x="60" y="40" width="10" height="10" rx="2" fill="#121922"/>
+                                <circle cx="35" cy="30" r="4" fill="#FF015D"/>
+                                <circle cx="50" cy="25" r="4" fill="#FF015D"/>
+                                <rect x="32" y="58" width="6" height="10" rx="1" fill="#FFFFFF" opacity="0.3"/>
+                                <rect x="47" y="58" width="6" height="10" rx="1" fill="#FF015D"/>
+                                <rect x="62" y="58" width="6" height="10" rx="1" fill="#FFFFFF" opacity="0.3"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Manufacturing</div>
+                        <div class="industry-desc">IoT & supply chain</div>
+                    </div>
+                    <div class="industry-card" data-industry="media">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="media-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="20" y="30" width="60" height="40" rx="6" fill="url(#media-grad)"/>
+                                <polygon points="42,45 42,55 55,50" fill="#FF015D"/>
+                                <circle cx="70" cy="38" r="5" fill="#FFFFFF" opacity="0.3"/>
+                                <rect x="25" y="73" width="50" height="3" rx="1" fill="#121922"/>
+                                <rect x="45" y="73" width="10" height="7" rx="1" fill="#121922"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Media & Entertainment</div>
+                        <div class="industry-desc">Streaming & content</div>
+                    </div>
+                    <div class="industry-card" data-industry="energy">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="energy-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="50" cy="50" r="28" fill="url(#energy-grad)"/>
+                                <polygon points="50,28 42,50 50,48 50,72 58,50 50,52" fill="#FF015D"/>
+                                <circle cx="35" cy="38" r="3" fill="#FFFFFF" opacity="0.3"/>
+                                <circle cx="65" cy="42" r="2" fill="#FFFFFF" opacity="0.3"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Energy & Utilities</div>
+                        <div class="industry-desc">Smart grids & renewables</div>
+                    </div>
+                    <div class="industry-card" data-industry="logistics">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="logistics-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="25" y="35" width="35" height="25" rx="4" fill="url(#logistics-grad)"/>
+                                <rect x="60" y="45" width="15" height="15" rx="3" fill="url(#logistics-grad)"/>
+                                <circle cx="35" cy="62" r="6" fill="#121922"/>
+                                <circle cx="35" cy="62" r="3" fill="#FFFFFF" opacity="0.3"/>
+                                <circle cx="65" cy="62" r="6" fill="#121922"/>
+                                <circle cx="65" cy="62" r="3" fill="#FFFFFF" opacity="0.3"/>
+                                <rect x="30" y="40" width="10" height="8" rx="1" fill="#FFFFFF" opacity="0.2"/>
+                                <rect x="45" y="40" width="10" height="8" rx="1" fill="#FF015D"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Logistics</div>
+                        <div class="industry-desc">Transportation & delivery</div>
+                    </div>
+                    <div class="industry-card" data-industry="travel">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="travel-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M50 30 L60 50 L75 53 L50 60 L25 53 L40 50 Z" fill="url(#travel-grad)"/>
+                                <path d="M48 60 L50 70 L52 60" fill="#121922"/>
+                                <circle cx="50" cy="45" r="5" fill="#FF015D"/>
+                                <rect x="48" y="35" width="4" height="8" rx="1" fill="#FFFFFF" opacity="0.3"/>
+                                <line x1="35" y1="52" x2="45" y2="48" stroke="#FF015D" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Travel & Hospitality</div>
+                        <div class="industry-desc">Booking & reservations</div>
+                    </div>
+                    <div class="industry-card" data-industry="insurance">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="insurance-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M50 25 L70 35 L70 55 Q70 70 50 75 Q30 70 30 55 L30 35 Z" fill="url(#insurance-grad)"/>
+                                <path d="M45 48 L48 55 L58 42" fill="none" stroke="#FF015D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="60" cy="35" r="3" fill="#FFFFFF" opacity="0.3"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Insurance</div>
+                        <div class="industry-desc">Claims & underwriting</div>
+                    </div>
+                    <div class="industry-card" data-industry="education">
+                        <div class="industry-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="education-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#121922;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#1a2633;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="30" y="40" width="40" height="30" rx="3" fill="url(#education-grad)"/>
+                                <path d="M30 40 L50 28 L70 40" fill="#FF015D"/>
+                                <rect x="45" y="50" width="10" height="15" rx="1" fill="#FFFFFF" opacity="0.3"/>
+                                <circle cx="50" cy="25" r="4" fill="#FF015D"/>
+                            </svg>
+                        </div>
+                        <div class="industry-title">Education</div>
+                        <div class="industry-desc">EdTech & universities</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-primary" onclick="nextStep(2)">Calculate My Baseline →</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Efficiency Baseline -->
+        <div class="card hidden" id="step2">
+            <h2><span class="step-badge">2</span> Current State Assessment</h2>
+            <p class="card-subtitle">Module 1: Efficiency Baseline (Engineering & Platform)</p>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="firefightingPct">
+                        % Time on "Firefighting"
+                        <span class="info-icon" data-tooltip="Industry studies show 30-50% of data team capacity is lost to reactive bug fixing, incident response, and ad-hoc debugging">i</span>
+                    </label>
+                    <input type="range" id="firefightingPct" min="0" max="100" value="40" />
+                    <div class="range-value"><span id="firefightingValue">40</span>%</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reductionTarget">
+                        Target Reduction via Sifflet
+                        <span class="info-icon" data-tooltip="Sifflet customers report 75-82% reduction in Mean Time To Resolution (MTTR) for data incidents">i</span>
+                    </label>
+                    <input type="range" id="reductionTarget" min="0" max="100" value="60" />
+                    <div class="range-value"><span id="reductionValue">60</span>%</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cloudSpend">
+                        Annual Cloud/Compute Spend ($)
+                        <span class="info-icon" data-tooltip="Total spend on data warehouses (Snowflake, BigQuery, Redshift) and compute platforms (Databricks, Spark)">i</span>
+                    </label>
+                    <input type="number" id="cloudSpend" min="0" max="10000000" step="50000" value="500000" placeholder="e.g., $500,000" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="wasteReduction">
+                        Waste Reduction Potential
+                        <span class="info-icon" data-tooltip="Data observability identifies unused tables, redundant queries, and shadow pipelines. Typical waste: 10-15%">i</span>
+                    </label>
+                    <input type="range" id="wasteReduction" min="0" max="30" value="10" />
+                    <div class="range-value"><span id="wasteValue">10</span>%</div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-secondary" onclick="prevStep(1)">← Back</button>
+                <button class="btn-primary" onclick="nextStep(3)">Quantify Business Impact →</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Industry-Specific Impact (Dynamic based on selection) -->
+        <div class="card hidden" id="step3">
+            <h2><span class="step-badge">3</span> Revenue & Business Impact</h2>
+            <p class="card-subtitle">Module 2: Industry-Specific Value Drivers</p>
+            
+            <div id="industryInputs">
+                <!-- Will be populated dynamically based on selection -->
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-secondary" onclick="prevStep(2)">← Back</button>
+                <button class="btn-primary" onclick="nextStep(4)">Add Strategic Value →</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Strategic Risk -->
+        <div class="card hidden" id="step4">
+            <h2><span class="step-badge">4</span> Strategic Priorities</h2>
+            <p class="card-subtitle">Module 3: Compliance, Risk & AI Readiness</p>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="auditsPerYear">
+                        Audits per Year
+                        <span class="info-icon" data-tooltip="Number of internal/external audits requiring data lineage documentation">i</span>
+                    </label>
+                    <input type="number" id="auditsPerYear" min="0" max="50" value="4" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="hoursPerAudit">
+                        Hours per Audit
+                        <span class="info-icon" data-tooltip="Time spent by data team on audit prep, evidence collection, and documentation">i</span>
+                    </label>
+                    <input type="number" id="hoursPerAudit" min="0" max="1000" value="200" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="aiProjectBudget">
+                        Annual AI Project Budget ($)
+                        <span class="info-icon" data-tooltip="Investment in AI/ML initiatives, including GenAI, LLMs, and machine learning projects">i</span>
+                    </label>
+                    <input type="number" id="aiProjectBudget" min="0" step="100000" value="2000000" />
+                </div>
+            </div>
+            
+            <label style="margin-top: 24px; margin-bottom: 16px; display: block; font-size: 16px; font-weight: 600;">Strategic Priorities (Select all that apply):</label>
+            <div class="checkbox-group">
+                <label class="checkbox-item">
+                    <input type="checkbox" value="audit" id="auditPriority" />
+                    <div class="checkbox-content">
+                        <div class="checkbox-title">Audit Efficiency</div>
+                        <div class="checkbox-desc">Automate lineage/evidence for BCBS 239, SOX</div>
+                    </div>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" value="regulatory" id="regulatoryPriority" />
+                    <div class="checkbox-content">
+                        <div class="checkbox-title">Regulatory Risk Mitigation</div>
+                        <div class="checkbox-desc">Prevent reporting failures and fines</div>
+                    </div>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" value="ai" id="aiPriority" />
+                    <div class="checkbox-content">
+                        <div class="checkbox-title">AI/GenAI Readiness</div>
+                        <div class="checkbox-desc">Move from POC to production faster</div>
+                    </div>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" value="reputation" id="reputationPriority" />
+                    <div class="checkbox-content">
+                        <div class="checkbox-title">Executive Reputation</div>
+                        <div class="checkbox-desc">Prevent board dashboard embarrassment</div>
+                    </div>
+                </label>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-secondary" onclick="prevStep(3)">← Back</button>
+                <button class="btn-primary" class="btn-pulse" onclick="calculateROI()">🚀 Calculate My Full ROI →</button>
+            </div>
+        </div>
+
+        <!-- Step 5: Results Preview -->
+        <div class="card hidden" id="step5">
+            <h2><span class="step-badge">5</span> Your ROI Preview</h2>
+            <p class="card-subtitle">High-level business value snapshot</p>
+            
+            <!-- Top Metrics - Simplified -->
+            <div class="results-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Total 3-Year Value</div>
+                    <div class="metric-value" id="totalValue">$0</div>
+                    <div class="metric-subtitle">Estimated cumulative impact</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Estimated Year 1 ROI</div>
+                    <div class="metric-value" id="year1ROI">0x</div>
+                    <div class="metric-subtitle">Immediate return potential</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Potential Savings</div>
+                    <div class="metric-value" id="annualSavings">$0</div>
+                    <div class="metric-subtitle">Annual value opportunity</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Fast Payback</div>
+                    <div class="metric-value" id="paybackPeriod">0</div>
+                    <div class="metric-subtitle">Estimated months</div>
+                </div>
+            </div>
+            
+            <!-- Lead Capture CTA -->
+            <div class="results-urgency">
+                ⚡ <span>Every month without action costs you approximately <strong id="monthlyCost">calculating...</strong> in lost productivity.</span>
+            </div>
+            <div class="social-strip">
+                <div class="social-strip-item"><strong>200+</strong><span>data teams</span></div>
+                <div class="social-strip-sep"></div>
+                <div class="social-strip-item"><strong>$2.8M</strong><span>avg. 3-year ROI</span></div>
+                <div class="social-strip-sep"></div>
+                <div class="social-strip-item"><strong>82%</strong><span>MTTR reduction</span></div>
+                <div class="social-strip-sep"></div>
+                <div class="social-strip-item"><strong>&lt;4 weeks</strong><span>avg. payback</span></div>
+            </div>
+            <div class="lead-capture-box">
+                <div class="lead-top">
+                    <div class="unlock-badge">Your report is ready ✓</div>
+                    <h3>Where should we send it?</h3>
+                    <p class="lead-sub">Join 200+ data leaders who used this report to justify their observability investment to the board.</p>
+                </div>
+                <div class="lead-benefits-row">
+                    <div class="lbr-item"><span>📊</span>Full 3-year projection</div>
+                    <div class="lbr-item"><span>🧊</span>Iceberg cost breakdown</div>
+                    <div class="lbr-item"><span>📋</span>Board-ready summary</div>
+                    <div class="lbr-item"><span>🗺️</span>Implementation roadmap</div>
+                </div>
+                <div id="hs-form-wrapper" style="display:block;min-height:100px;">
+                    <div id="hubspot-form-target"></div>
+                </div>
+                <div class="trust-footer">
+                    <span>🔒 No spam, ever</span><span>·</span>
+                    <span>Instant access</span><span>·</span>
+                    <span>Free, always</span>
+                </div>
+            </div>
+            
+            <div class="button-group" style="margin-top: 32px;">
+                <button class="btn-secondary" onclick="prevStep(4)">← Recalculate</button>
+            </div>
+        </div>
+
+        <!-- Step 6: Full Report (unlocked after email) -->
+        <div class="card hidden" id="step6">
+            <h2><span class="step-badge">✓</span> Your Complete ROI Analysis</h2>
+            <p class="card-subtitle">Comprehensive business value quantification for <span id="userCompany" style="color: var(--mint-tea);"></span></p>
+            
+            <!-- Iceberg Visualization -->
+            <div class="iceberg-container">
+                <h3 class="iceberg-title-main">The Iceberg: Hidden vs. Visible Costs</h3>
+                <div class="water-line"></div>
+                
+                <div class="iceberg-section" style="margin-bottom: 80px;">
+                    <div class="iceberg-section-title">
+                        ⬆️ Above the Water: Visible Costs
+                    </div>
+                    <div class="iceberg-value" id="visibleCosts">$0</div>
+                    <ul class="iceberg-items">
+                        <li>
+                            <span>Engineering Firefighting Time</span>
+                            <span class="iceberg-item-value" id="firefightingCost">$0</span>
+                        </li>
+                        <li>
+                            <span>Cloud Infrastructure Waste</span>
+                            <span class="iceberg-item-value" id="cloudWaste">$0</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="iceberg-section">
+                    <div class="iceberg-section-title">
+                        ⬇️ Below the Water: Hidden Business Costs
+                    </div>
+                    <div class="iceberg-value" id="hiddenCosts">$0</div>
+                    <ul class="iceberg-items" id="hiddenCostsList">
+                        <!-- Dynamically populated -->
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 3-Year Timeline -->
+            <h3 style="margin-bottom: 24px; font-size: 28px; font-weight: 700;">3-Year Value Narrative</h3>
+            <div class="timeline">
+                <div class="timeline-card">
+                    <div class="timeline-year">Year 1</div>
+                    <div class="timeline-title">Operational</div>
+                    <div class="timeline-value" id="year1Value">$0</div>
+                    <div class="timeline-desc">MTTR reduced by 82%. Immediate capacity recovery covers tool cost.</div>
+                </div>
+                <div class="timeline-card">
+                    <div class="timeline-year">Year 2</div>
+                    <div class="timeline-title">Tactical</div>
+                    <div class="timeline-value" id="year2Value">$0</div>
+                    <div class="timeline-desc">Prevention of 1-2 major silent failures generates 3-5x ROI.</div>
+                </div>
+                <div class="timeline-card">
+                    <div class="timeline-year">Year 3</div>
+                    <div class="timeline-title">Strategic</div>
+                    <div class="timeline-value" id="year3Value">$0</div>
+                    <div class="timeline-desc">Automated trust enables GenAI deployment at scale.</div>
+                </div>
+            </div>
+            
+            <!-- Cost of Inaction -->
+            <div class="warning-box">
+                <div class="warning-title">💡 Cost of Inaction</div>
+                <div class="warning-text">
+                    With <strong><span id="inactionTeamSize">10</span> data engineers</strong>, you're currently spending 
+                    <strong>$<span id="inactionCost">600,000</span>/year</strong> 
+                    (<span id="inactionFTEs">4 FTEs</span>) just maintaining the status quo of broken pipelines. 
+                    <strong>Sifflet returns that capacity to your roadmap.</strong>
+                </div>
+            </div>
+            
+            <!-- CTA -->
+            <div class="cta-banner">
+                <h3>Ready to Unlock This Value?</h3>
+                <p>Schedule a personalized demo to see how Sifflet can deliver these results for <strong id="userCompany2"></strong>.</p>
+                <div class="cta-buttons">
+                    <button class="btn-cta" onclick="window.open('https://www.siffletdata.com/contact-us', '_blank')">
+                        Schedule Demo
+                    </button>
+                    <button class="btn-cta-secondary" onclick="downloadPDF()">
+                        🖨️ Save as PDF
+                    </button>
+                </div>
+            </div>
+            
+            <div class="button-group" style="margin-top: 32px;">
+                <button class="btn-secondary" onclick="location.reload()">← Start New Calculation</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2026 Sifflet. All calculations based on industry benchmarks and customer data.</p>
+        <p style="margin-top: 8px; font-size: 12px;">Sources: Gartner, Forrester, Sifflet Customer Success Data</p>
+    </div>
+
+    <script>
+        // State Management
+        let currentStep = 1;
+        let selectedIndustry = '';
+        
+        // Industry configurations with specific metrics and risks
+        const industryConfigs = {
+            retail: {
+                inputs: [
+                    { id: 'annualRevenue', label: 'Annual Revenue ($)', type: 'number', value: 50000000 },
+                    { id: 'adSpend', label: 'Annual Marketing/Ad Spend ($)', type: 'number', value: 5000000 }
+                ],
+                risks: [
+                    { value: 'forecasting', title: 'Demand Forecasting Errors', desc: 'Bad inventory data causes stockouts (lost sales) and overstock (markdowns). Industry avg: 2-4% revenue impact', calc: (data) => data.annualRevenue * 0.02 * 0.5 },
+                    { value: 'pricing', title: 'Dynamic Pricing Failures', desc: 'Stale or incorrect pricing data in e-commerce. Even 0.5% error on high-velocity SKUs creates massive leakage', calc: (data) => (data.annualRevenue / 365) * 30 * 0.01 },
+                    { value: 'marketing', title: 'Marketing Attribution & Personalization', desc: 'Bad customer data = wasted ad spend, poor segmentation, broken recommendations. 15-25% efficiency loss', calc: (data) => data.adSpend * 0.15 }
+                ]
+            },
+            fsi: {
+                inputs: [
+                    { id: 'fsiRevenue', label: 'Annual Revenue ($)', type: 'number', value: 100000000 },
+                    { id: 'fraudLoss', label: 'Annual Fraud Loss ($)', type: 'number', value: 2000000 }
+                ],
+                risks: [
+                    { value: 'fraud', title: 'Real-time Fraud Detection', desc: 'Data quality issues in transaction monitoring cause 20-30% false negatives. Each missed fraud = direct loss', calc: (data) => data.fraudLoss * 0.2 },
+                    { value: 'crosssell', title: 'Customer 360 & Cross-Sell', desc: 'Incomplete/stale customer data prevents next-best-action models. Banks lose 15-25% of cross-sell revenue', calc: (data) => data.fsiRevenue * 0.15 },
+                    { value: 'compliance', title: 'Regulatory Reporting (BCBS 239, SOX, GDPR)', desc: 'Manual lineage = weeks of audit prep. Reporting failures = fines. Avg cost: $1M+/year', calc: () => 1000000 }
+                ]
+            },
+            saas: {
+                inputs: [
+                    { id: 'saasARR', label: 'Annual Recurring Revenue ($)', type: 'number', value: 30000000 },
+                    { id: 'churnRate', label: 'Annual Churn Rate (%)', type: 'number', value: 15 }
+                ],
+                risks: [
+                    { value: 'billing', title: 'Usage-Based Billing Accuracy', desc: 'Metering errors, delayed data = revenue leakage. Usage-based SaaS sees 1-3% leakage from bad data', calc: (data) => data.saasARR * 0.02 },
+                    { value: 'churn', title: 'Product-Led Growth & Health Scores', desc: 'Bad usage data = missed churn signals. 15-25% of churn is preventable with reliable product analytics', calc: (data) => data.saasARR * (data.churnRate/100) * 0.15 },
+                    { value: 'product', title: 'Product Analytics Reliability', desc: '10-20% of product decisions based on unreliable queries. Bad data = wrong roadmap = wasted dev cycles', calc: (data) => data.saasARR * 0.20 * 0.10 }
+                ]
+            },
+            healthcare: {
+                inputs: [
+                    { id: 'patientVolume', label: 'Annual Patient Encounters', type: 'number', value: 100000 },
+                    { id: 'healthcareRevenue', label: 'Annual Revenue ($)', type: 'number', value: 50000000 }
+                ],
+                risks: [
+                    { value: 'clinical', title: 'Clinical Decision Support & Patient Safety', desc: 'EHR data quality issues delay diagnoses, cause medication errors. Each preventable adverse event = $50K+', calc: (data) => data.healthcareRevenue * 0.03 },
+                    { value: 'compliance', title: 'HIPAA Compliance & Audit Readiness', desc: 'Data lineage required for breach notifications, audits. Manual tracing = weeks. Violations = $1.5M+ fines', calc: () => 500000 },
+                    { value: 'operations', title: 'Revenue Cycle & Claims Processing', desc: 'Bad coding/billing data = claim denials. Healthcare orgs lose 2-5% revenue to preventable denials', calc: (data) => data.healthcareRevenue * 0.02 }
+                ]
+            },
+            telecom: {
+                inputs: [
+                    { id: 'telecomRevenue', label: 'Annual Revenue ($)', type: 'number', value: 200000000 },
+                    { id: 'subscribers', label: 'Total Subscribers (millions)', type: 'number', value: 5 }
+                ],
+                risks: [
+                    { value: 'churn', title: 'Predictive Churn Prevention', desc: 'Network quality, usage patterns predict churn. Bad data = missed signals. Each prevented churn = $1K+ LTV', calc: (data) => data.telecomRevenue * 0.02 },
+                    { value: 'network', title: 'Network Performance Optimization', desc: 'Real-time monitoring of IoT/5G infrastructure. Bad telemetry = outages, SLA breaches. Cost: 1-2% revenue', calc: (data) => data.telecomRevenue * 0.015 },
+                    { value: 'billing', title: 'Usage Metering & Revenue Assurance', desc: 'CDR (Call Detail Records) errors cause revenue leakage. Industry avg: 1-2% of billing errors', calc: (data) => data.telecomRevenue * 0.01 }
+                ]
+            },
+            manufacturing: {
+                inputs: [
+                    { id: 'mfgRevenue', label: 'Annual Revenue ($)', type: 'number', value: 150000000 },
+                    { id: 'downtime', label: 'Annual Unplanned Downtime Cost ($)', type: 'number', value: 5000000 }
+                ],
+                risks: [
+                    { value: 'predictive', title: 'IoT Predictive Maintenance', desc: 'Sensor data quality = maintenance accuracy. Bad data = false alarms or missed failures. Reduces downtime 20-30%', calc: (data) => data.downtime * 0.3 },
+                    { value: 'quality', title: 'Manufacturing Quality Control (Six Sigma)', desc: 'Real-time defect detection from production data. Catch defects earlier = lower scrap/rework costs (2-3% savings)', calc: (data) => data.mfgRevenue * 0.02 },
+                    { value: 'supply', title: 'Supply Chain Visibility & JIT', desc: 'Real-time inventory, supplier data. Bad data = stockouts, expedited shipping. Typical impact: 1-2% of revenue', calc: (data) => data.mfgRevenue * 0.015 }
+                ]
+            },
+            media: {
+                inputs: [
+                    { id: 'mediaRevenue', label: 'Annual Revenue ($)', type: 'number', value: 75000000 },
+                    { id: 'contentSpend', label: 'Annual Content Production/Acquisition ($)', type: 'number', value: 20000000 }
+                ],
+                risks: [
+                    { value: 'personalization', title: 'Recommendation Engine & Engagement', desc: 'Netflix-style personalization needs reliable viewing data. Bad recommendations = 5-10% lower engagement/retention', calc: (data) => data.mediaRevenue * 0.05 },
+                    { value: 'monetization', title: 'Programmatic Ad Optimization', desc: 'Real-time bidding, audience targeting. Bad impression data = 3-5% ad revenue loss from underfill/mistargeting', calc: (data) => data.mediaRevenue * 0.03 },
+                    { value: 'production', title: 'Content ROI & Greenlight Decisions', desc: 'Viewership analytics guide $M+ content investments. 10% better data = 10% better portfolio returns', calc: (data) => data.contentSpend * 0.10 }
+                ]
+            },
+            energy: {
+                inputs: [
+                    { id: 'energyRevenue', label: 'Annual Revenue ($)', type: 'number', value: 300000000 },
+                    { id: 'gridCost', label: 'Annual Grid Operations Cost ($)', type: 'number', value: 50000000 }
+                ],
+                risks: [
+                    { value: 'predictive', title: 'Smart Grid Load Balancing', desc: 'Real-time IoT sensor data from meters, substations. Bad forecasts = peak demand failures or wasted capacity (10-15% savings)', calc: (data) => data.gridCost * 0.15 },
+                    { value: 'outage', title: 'Predictive Outage Prevention', desc: 'Equipment monitoring, weather correlation. Each major outage = $M+ in lost revenue, fines. Prevent 1-2%', calc: (data) => data.energyRevenue * 0.01 },
+                    { value: 'demand', title: 'Demand Forecasting & Trading', desc: 'Energy trading requires accurate consumption forecasts. Bad data = suboptimal purchases. 1-2% margin improvement', calc: (data) => data.energyRevenue * 0.02 }
+                ]
+            },
+            logistics: {
+                inputs: [
+                    { id: 'logisticsRevenue', label: 'Annual Revenue ($)', type: 'number', value: 100000000 },
+                    { id: 'fleetSize', label: 'Fleet Size (vehicles)', type: 'number', value: 500 }
+                ],
+                risks: [
+                    { value: 'routing', title: 'Dynamic Route Optimization', desc: 'GPS, traffic, delivery windows. Bad location data = 5-10% wasted miles, late deliveries, SLA penalties', calc: (data) => data.logisticsRevenue * 0.05 },
+                    { value: 'tracking', title: 'Real-Time Shipment Visibility', desc: 'Customer expect live tracking. Data gaps = CS calls, delivery failures. Improves on-time delivery 2-3%', calc: (data) => data.logisticsRevenue * 0.02 },
+                    { value: 'capacity', title: 'Fleet Utilization & Load Optimization', desc: 'Telematics data optimizes capacity. Bad data = empty miles, missed consolidation. 3-5% efficiency gain', calc: (data) => data.logisticsRevenue * 0.03 }
+                ]
+            },
+            travel: {
+                inputs: [
+                    { id: 'travelRevenue', label: 'Annual Booking Volume ($)', type: 'number', value: 200000000 },
+                    { id: 'commission', label: 'Avg. Take Rate (%)', type: 'number', value: 15 }
+                ],
+                risks: [
+                    { value: 'dynamic', title: 'Real-Time Dynamic Pricing', desc: 'Pricing algorithms need live inventory, competitor data. Stale data = revenue leakage. Optimization = 2-3% uplift', calc: (data) => data.travelRevenue * 0.03 },
+                    { value: 'personalization', title: 'Personalized Search & Upsells', desc: 'User behavior, preferences, history. Bad data = lower conversion, missed ancillary revenue. 3-5% impact', calc: (data) => data.travelRevenue * 0.05 },
+                    { value: 'fraud', title: 'Payment Fraud & Chargeback Prevention', desc: 'High-velocity transactions, stolen cards. Bad signals = fraud losses or false declines. Reduce 1-2%', calc: (data) => data.travelRevenue * 0.01 }
+                ]
+            },
+            insurance: {
+                inputs: [
+                    { id: 'insuranceRevenue', label: 'Annual Premium Revenue ($)', type: 'number', value: 500000000 },
+                    { id: 'claimsVolume', label: 'Annual Claims Payouts ($)', type: 'number', value: 350000000 }
+                ],
+                risks: [
+                    { value: 'underwriting', title: 'Actuarial Models & Risk Assessment', desc: 'Pricing models need clean claims history, demographic data. Bad data = mispriced risk. 1-2% margin impact', calc: (data) => data.insuranceRevenue * 0.02 },
+                    { value: 'fraud', title: 'Claims Fraud Detection', desc: 'Fraud detection models. Bad data = false positives (CS issues) or missed fraud. Reduce fraud 1-2%', calc: (data) => data.claimsVolume * 0.01 },
+                    { value: 'pricing', title: 'Telematics & Usage-Based Insurance', desc: 'Real-time driver behavior, IoT sensors. Bad telemetry = pricing errors. Optimize 1-2% of premiums', calc: (data) => data.insuranceRevenue * 0.015 }
+                ]
+            },
+            education: {
+                inputs: [
+                    { id: 'eduRevenue', label: 'Annual Revenue ($)', type: 'number', value: 50000000 },
+                    { id: 'students', label: 'Total Students/Learners', type: 'number', value: 10000 }
+                ],
+                risks: [
+                    { value: 'outcomes', title: 'Learning Analytics & Adaptive Pathways', desc: 'Personalized learning needs clean engagement, assessment data. Bad data = wrong interventions. 2-3% outcome lift', calc: (data) => data.eduRevenue * 0.03 },
+                    { value: 'retention', title: 'Early Warning & Student Retention', desc: 'Attendance, grades, engagement predict dropout. Each retained student = $10K+ LTV. Improve retention 3-5%', calc: (data) => data.eduRevenue * 0.05 },
+                    { value: 'operations', title: 'Enrollment Forecasting & Resource Planning', desc: 'Course demand, staffing, facilities. Bad forecasts = overinvestment or capacity constraints. 2% efficiency gain', calc: (data) => data.eduRevenue * 0.02 }
+                ]
+            }
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            // Start with intro visible, calculator hidden
+            document.getElementById('introSection').style.display = 'block';
+            document.getElementById('heroSection').style.display = 'none';
+            document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+        });
+        
+        function startCalculator() {
+            // Hide intro, show calculator
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('heroSection').style.display = 'block';
+            document.getElementById('step1').classList.remove('hidden');
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function setupEventListeners() {
+            // Range sliders
+            ['firefightingPct', 'reductionTarget', 'wasteReduction'].forEach(id => {
+                const slider = document.getElementById(id);
+                const valueSpan = document.getElementById(id.replace('Pct', 'Value').replace('Target', 'Value').replace('Reduction', 'Value'));
+                slider.addEventListener('input', (e) => {
+                    valueSpan.textContent = e.target.value;
+                });
+            });
+            
+            // Industry selection
+            document.querySelectorAll('.industry-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.industry-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    selectedIndustry = card.dataset.industry;
+                });
+            });
+            
+            // Checkbox styling
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('checkbox-item') || e.target.closest('.checkbox-item')) {
+                    const item = e.target.classList.contains('checkbox-item') ? e.target : e.target.closest('.checkbox-item');
+                    if (e.target.tagName !== 'INPUT') {
+                        const checkbox = item.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    item.classList.toggle('checked', item.querySelector('input[type="checkbox"]').checked);
+                }
+            });
+        }
+        
+        function nextStep(step) {
+            // Validation
+            if (currentStep === 1) {
+                if (!selectedIndustry) {
+                    alert('Please select an industry');
+                    return;
+                }
+                const teamSize = document.getElementById('dataTeamSize').value;
+                if (!teamSize || teamSize < 1) {
+                    alert('Please enter a valid data team size');
+                    return;
+                }
+            }
+            
+            // Hide current step
+            document.getElementById(`step${currentStep}`).classList.add('hidden');
+            
+            // Show next step
+            currentStep = step;
+            document.getElementById(`step${step}`).classList.remove('hidden');
+            
+            // Populate industry-specific inputs in step 3
+            if (step === 3) {
+                populateIndustryInputs();
+            }
+            
+            // Hide hero after step 1
+            if (step > 1) {
+                document.getElementById('heroSection').style.display = 'none';
+            }
+            
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Load HubSpot form when step 5 is shown
+            if (step === 5) {
+                setTimeout(function() {
+                    if (typeof window.loadHubSpotForm === 'function') {
+                        window.loadHubSpotForm();
+                    }
+                }, 400);
+            }
+        }
+        
+        function prevStep(step) {
+            document.getElementById(`step${currentStep}`).classList.add('hidden');
+            currentStep = step;
+            document.getElementById(`step${step}`).classList.remove('hidden');
+            
+            if (step === 1) {
+                document.getElementById('heroSection').style.display = 'block';
+            }
+            
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Load HubSpot form when step 5 is shown
+            if (step === 5) {
+                setTimeout(function() {
+                    if (typeof window.loadHubSpotForm === 'function') {
+                        window.loadHubSpotForm();
+                    }
+                }, 400);
+            }
+        }
+        
+        function updateProgress() {
+            const progress = (currentStep / 5) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            // Update step labels
+            ['stepLabel1', 'stepLabel2', 'stepLabel3', 'stepLabel4', 'stepLabel5'].forEach((id, idx) => {
+                const label = document.getElementById(id);
+                if (idx + 1 === currentStep) {
+                    label.classList.add('active');
+                } else {
+                    label.classList.remove('active');
+                }
+            });
+        }
+        
+        function populateIndustryInputs() {
+            const config = industryConfigs[selectedIndustry];
+            if (!config) return;
+            
+            const container = document.getElementById('industryInputs');
+            
+            let html = '<div class="form-grid">';
+            config.inputs.forEach(input => {
+                html += `
+                    <div class="form-group">
+                        <label for="${input.id}">${input.label}</label>
+                        <input type="${input.type}" id="${input.id}" value="${input.value}" min="0" placeholder="e.g., ${input.value.toLocaleString()}" />
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            html += '<label style="margin-top: 24px; margin-bottom: 16px; display: block; font-size: 16px; font-weight: 600;">Select Relevant Risk Areas:</label>';
+            html += '<div class="checkbox-group">';
+            config.risks.forEach(risk => {
+                html += `
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="${risk.value}" data-industry="${selectedIndustry}" />
+                        <div class="checkbox-content">
+                            <div class="checkbox-title">${risk.title}</div>
+                            <div class="checkbox-desc">${risk.desc}</div>
+                        </div>
+                    </label>
+                `;
+            });
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+        
+        function calculateROI() {
+            // Collect all form data
+            const dataTeamSize = parseFloat(document.getElementById('dataTeamSize').value);
+            const avgSalary = parseFloat(document.getElementById('avgSalary').value);
+            const firefightingPct = parseFloat(document.getElementById('firefightingPct').value) / 100;
+            const reductionTarget = parseFloat(document.getElementById('reductionTarget').value) / 100;
+            const cloudSpend = parseFloat(document.getElementById('cloudSpend').value);
+            const wasteReduction = parseFloat(document.getElementById('wasteReduction').value) / 100;
+            
+            // Module 1: Efficiency Baseline
+            const firefightingSavings = dataTeamSize * avgSalary * firefightingPct * reductionTarget;
+            const cloudSavings = cloudSpend * wasteReduction;
+            const module1Total = firefightingSavings + cloudSavings;
+            
+            // Module 2: Industry-Specific
+            let module2Total = 0;
+            const hiddenCosts = [];
+            
+            const config = industryConfigs[selectedIndustry];
+            if (config) {
+                // Collect input data
+                const inputData = {};
+                config.inputs.forEach(input => {
+                    const value = parseFloat(document.getElementById(input.id).value);
+                    inputData[input.id] = value;
+                });
+                
+                // Calculate selected risks
+                document.querySelectorAll(`input[data-industry="${selectedIndustry}"]:checked`).forEach(cb => {
+                    const risk = config.risks.find(r => r.value === cb.value);
+                    if (risk) {
+                        const impact = risk.calc(inputData);
+                        module2Total += impact;
+                        hiddenCosts.push({ label: risk.title, value: impact });
+                    }
+                });
+            }
+            
+            // Module 3: Strategic
+            let module3Total = 0;
+            
+            if (document.getElementById('auditPriority').checked) {
+                const audits = parseFloat(document.getElementById('auditsPerYear').value);
+                const hours = parseFloat(document.getElementById('hoursPerAudit').value);
+                const hourlyRate = avgSalary / 2080;
+                const impact = audits * hours * hourlyRate * 0.50;
+                module3Total += impact;
+                hiddenCosts.push({ label: 'Audit Efficiency Gains', value: impact });
+            }
+            
+            if (document.getElementById('regulatoryPriority').checked) {
+                const impact = 500000;
+                module3Total += impact;
+                hiddenCosts.push({ label: 'Regulatory Risk Mitigation', value: impact });
+            }
+            
+            if (document.getElementById('aiPriority').checked) {
+                const aiBudget = parseFloat(document.getElementById('aiProjectBudget').value);
+                const impact = aiBudget * 0.20;
+                module3Total += impact;
+                hiddenCosts.push({ label: 'AI Readiness Acceleration', value: impact });
+            }
+            
+            if (document.getElementById('reputationPriority').checked) {
+                hiddenCosts.push({ label: 'Executive Reputation Protection', value: 'Intangible' });
+            }
+            
+            // Calculate totals
+            const year1Value = module1Total + (module2Total * 0.5) + (module3Total * 0.3);
+            const year2Value = module1Total + module2Total + (module3Total * 0.6);
+            const year3Value = module1Total + (module2Total * 1.2) + module3Total;
+            const totalValue = year1Value + year2Value + year3Value;
+            
+            const assumedToolCost = dataTeamSize * 5000;
+            const roi = totalValue / assumedToolCost;
+            const paybackMonths = Math.ceil((assumedToolCost / year1Value) * 12);
+            
+            // Store data for later use
+            window.roiData = {
+                totalValue, year1Value, year2Value, year3Value, roi, paybackMonths,
+                module1Total, firefightingSavings, cloudSavings,
+                module2Total, module3Total, hiddenCosts,
+                dataTeamSize, avgSalary, firefightingPct
+            };
+            
+            // Display preview results
+            document.getElementById('totalValue').textContent = formatCurrency(totalValue);
+            document.getElementById('year1ROI').textContent = `${roi.toFixed(1)}x`;
+            document.getElementById('annualSavings').textContent = formatCurrency(year1Value);
+            document.getElementById('paybackPeriod').textContent = `${paybackMonths} mo`;
+            
+            // CRO: update urgency monthly cost
+            const monthly = Math.round(year1Value / 12);
+            const costEl = document.getElementById('monthlyCost');
+            if (costEl) costEl.textContent = monthly >= 1000000 ? '$'+(monthly/1000000).toFixed(1)+'M' : monthly >= 1000 ? '$'+(monthly/1000).toFixed(0)+'K' : '$'+monthly;
+
+            // Tag industry for HubSpot hidden fields
+            if (window.roiData) window.roiData.industry = selectedIndustry;
+            
+            nextStep(5);
+            
+            setTimeout(() => {
+                const ft = document.getElementById('hubspot-form-target');
+                if (ft) ft.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 800);
+        }
+        
+        function unlockReport(event) {
+            event.preventDefault();
+            
+            // Collect lead data
+            const leadData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                company: document.getElementById('company').value,
+                jobTitle: document.getElementById('jobTitle').value,
+                teamSize: document.getElementById('teamSize').value,
+                industry: selectedIndustry,
+                calculatedROI: window.roiData
+            };
+            
+            // Here you would normally send to your backend/CRM
+            console.log('Lead captured:', leadData);
+            
+            // In production, send to HubSpot/Salesforce:
+            // fetch('/api/leads', { method: 'POST', body: JSON.stringify(leadData) })
+            
+            // Store company name for personalization
+            document.getElementById('userCompany').textContent = leadData.company;
+            document.getElementById('userCompany2').textContent = leadData.company;
+            
+            // Populate full report with stored data
+            const data = window.roiData;
+            
+            document.getElementById('visibleCosts').textContent = formatCurrency(data.module1Total);
+            document.getElementById('firefightingCost').textContent = formatCurrency(data.firefightingSavings);
+            document.getElementById('cloudWaste').textContent = formatCurrency(data.cloudSavings);
+            
+            document.getElementById('hiddenCosts').textContent = formatCurrency(data.module2Total + data.module3Total);
+            
+            const hiddenList = document.getElementById('hiddenCostsList');
+            hiddenList.innerHTML = '';
+            data.hiddenCosts.forEach(cost => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${cost.label}</span>
+                    <span class="iceberg-item-value">${typeof cost.value === 'number' ? formatCurrency(cost.value) : cost.value}</span>
+                `;
+                hiddenList.appendChild(li);
+            });
+            
+            document.getElementById('year1Value').textContent = formatCurrency(data.year1Value);
+            document.getElementById('year2Value').textContent = formatCurrency(data.year2Value);
+            document.getElementById('year3Value').textContent = formatCurrency(data.year3Value);
+            
+            // Cost of inaction
+            const inactionFTEs = data.dataTeamSize * data.firefightingPct;
+            const inactionCost = inactionFTEs * data.avgSalary;
+            document.getElementById('inactionTeamSize').textContent = data.dataTeamSize;
+            document.getElementById('inactionCost').textContent = Math.round(inactionCost).toLocaleString();
+            document.getElementById('inactionFTEs').textContent = inactionFTEs.toFixed(1);
+            
+            // Show full report (step 6)
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.remove('hidden');
+            
+            // Update progress to show completion
+            document.getElementById('progressBar').style.width = '100%';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function downloadPDF() {
+            // Prepare print view
+            document.title = 'Sifflet ROI Report - ' + (document.getElementById('userCompany').textContent || 'Your Company');
+            
+            // Scroll to top first so print captures everything
+            window.scrollTo(0, 0);
+            
+            // Small delay to let scroll settle, then print
+            setTimeout(function() {
+                window.print();
+            }, 150);
+        }
+        
+        function formatCurrency(value) {
+            if (value >= 1000000) {
+                return `$${(value / 1000000).toFixed(1)}M`;
+            } else if (value >= 1000) {
+                return `$${(value / 1000).toFixed(0)}K`;
+            }
+            return `$${Math.round(value).toLocaleString()}`;
+        }
+    </script>
+
+<!-- STICKY BOTTOM CTA -->
+<div class="sticky-cta" id="stickyCta">
+    <div class="sticky-cta-text"><strong>Sifflet ROI Calculator</strong> · Discover the complete financial impact of data observability</div>
+    <button class="sticky-cta-btn" onclick="startCalculator()">Calculate My ROI →</button>
+</div>
+
+<!-- HUBSPOT FORMS EMBED -->
+<script>
+    // ===== HUBSPOT FORM + ROI HIDDEN FIELDS =====
+    let hubspotFormLoaded = false;
+    window.loadHubSpotForm = function loadHubSpotForm() {
+        if (hubspotFormLoaded) return;
+        if (typeof hbspt === 'undefined') { setTimeout(window.loadHubSpotForm, 300); return; }
+        
+        // Make sure the target element exists and is visible before injecting
+        const target = document.getElementById('hubspot-form-target');
+        if (!target) { setTimeout(window.loadHubSpotForm, 300); return; }
+        
+        // Clear any previous content
+        target.innerHTML = '';
+        hubspotFormLoaded = true;
+        
+        hbspt.forms.create({
+            region: "eu1",
+            portalId: "24383351",
+            formId: "0f80cf49-e060-4260-9c2f-f5d0ee851d5c",
+            target: "#hubspot-form-target",
+            onFormReady: function($form) {
+                injectROIData();
+            },
+            onFormSubmit: function() { injectROIData(); },
+            onFormSubmitted: function() { showFullReport(); }
+        });
+    }
+
+    function injectROIData() {
+        const d = window.roiData;
+        if (!d) return;
+        const map = { retail:'Retail & E-Commerce', fsi:'Financial Services', saas:'SaaS / Technology', healthcare:'Healthcare', telecom:'Telecommunications', manufacturing:'Manufacturing', media:'Media & Entertainment', energy:'Energy & Utilities', logistics:'Logistics & Transportation', travel:'Travel & Hospitality', insurance:'Insurance', education:'Education' };
+        function fmt(v) { return v>=1000000?'$'+(v/1000000).toFixed(1)+'M':v>=1000?'$'+(v/1000).toFixed(0)+'K':'$'+Math.round(v); }
+        function set(name, val) { document.querySelectorAll('#hubspot-form-target input[name="'+name+'"]').forEach(i=>i.value=val); }
+        set('roi_calculator_industry', map[d.industry] || d.industry || '');
+        set('roi_total_3year_value',   fmt(d.totalValue));
+        set('roi_year1_multiple',      d.roi ? d.roi.toFixed(1)+'x' : '');
+        set('roi_payback_months',      d.paybackMonths ? d.paybackMonths+' months' : '');
+        set('roi_data_team_size',      d.dataTeamSize || '');
+    }
+
+    function showFullReport() {
+        const companyEl = document.querySelector('#hubspot-form-target input[name="company"]');
+        const company = companyEl ? companyEl.value : 'Your Company';
+        document.getElementById('userCompany').textContent = company;
+        document.getElementById('userCompany2').textContent = company;
+        const d = window.roiData;
+        if (!d) return;
+        function fmt(v) { return v>=1000000?'$'+(v/1000000).toFixed(1)+'M':v>=1000?'$'+(v/1000).toFixed(0)+'K':'$'+Math.round(v); }
+        document.getElementById('visibleCosts').textContent     = fmt(d.module1Total||0);
+        document.getElementById('firefightingCost').textContent = fmt(d.firefightingSavings||0);
+        document.getElementById('cloudWaste').textContent       = fmt(d.cloudSavings||0);
+        document.getElementById('hiddenCosts').textContent      = fmt((d.module2Total||0)+(d.module3Total||0));
+        const list = document.getElementById('hiddenCostsList');
+        if (list && d.hiddenCosts) {
+            list.innerHTML = '';
+            d.hiddenCosts.forEach(c => {
+                const li = document.createElement('li');
+                li.innerHTML = '<span>'+c.label+'</span><span class="iceberg-item-value">'+(typeof c.value==='number'?fmt(c.value):c.value)+'</span>';
+                list.appendChild(li);
+            });
+        }
+        document.getElementById('year1Value').textContent = fmt(d.year1Value||0);
+        document.getElementById('year2Value').textContent = fmt(d.year2Value||0);
+        document.getElementById('year3Value').textContent = fmt(d.year3Value||0);
+        const fte = d.dataTeamSize * d.firefightingPct;
+        const ts=document.getElementById('inactionTeamSize'), ic=document.getElementById('inactionCost'), iff=document.getElementById('inactionFTEs');
+        if(ts) ts.textContent=d.dataTeamSize;
+        if(ic) ic.textContent=Math.round(fte*d.avgSalary).toLocaleString();
+        if(iff) iff.textContent=fte.toFixed(1);
+        document.getElementById('step5').classList.add('hidden');
+        document.getElementById('step6').classList.remove('hidden');
+        document.getElementById('progressBar').style.width='100%';
+        window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    // Industry tagging and form loading handled directly in calculateROI and nextStep
+
+    // Sticky CTA
+    const stickyCta = document.getElementById('stickyCta');
+    window.addEventListener('scroll', () => {
+        const intro = document.getElementById('introSection');
+        if (!intro) return;
+        stickyCta.classList.toggle('visible', intro.getBoundingClientRect().bottom < window.innerHeight * 0.4);
+    });
+
+        // Exit intent
+    let exitShown = false;
+    document.addEventListener('mouseleave', function(e) {
+        if (e.clientY > 0 || exitShown || typeof currentStep === 'undefined' || currentStep < 2 || currentStep > 4) return;
+        exitShown = true;
+        const steps = currentStep - 1;
+        const o = document.createElement('div');
+        o.style.cssText = 'position:fixed;inset:0;background:rgba(3,15,34,0.93);z-index:9999;display:flex;align-items:center;justify-content:center;';
+        o.innerHTML = [
+            '<div style="background:#0A1628;border:2px solid #E40166;border-radius:20px;padding:48px;max-width:460px;text-align:center;margin:20px;">',
+            '<div style="font-size:52px;margin-bottom:16px;">&#x1F4CA;</div>',
+            '<h3 style="font-size:26px;font-weight:800;margin-bottom:12px;color:#fff;">Wait - your progress will be lost!</h3>',
+            '<p style="color:#8A90A0;margin-bottom:28px;font-size:15px;line-height:1.6;">You are ' + steps + ' step' + (steps > 1 ? 's' : '') + ' in. Finish now and get your ROI report in under 2 minutes.</p>',
+            '<button id="exitContinueBtn" style="width:100%;padding:16px;background:#E40166;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:12px;">Continue My Calculation</button>',
+            '<button id="exitLeaveBtn" style="width:100%;padding:10px;background:transparent;color:#8A90A0;border:none;font-size:13px;cursor:pointer;">No thanks, I will lose my progress</button>',
+            '</div>'
+        ].join('');
+        document.body.appendChild(o);
+        document.getElementById('exitContinueBtn').onclick = function() { o.remove(); };
+        document.getElementById('exitLeaveBtn').onclick = function() { o.remove(); };
+    });
+
+    // Inline validation + eager HubSpot preload
+    document.addEventListener('DOMContentLoaded', () => {
+        // Pre-load HubSpot script so form renders instantly when step5 appears
+        // (form won't render until hubspot-form-target is visible)
+        document.querySelectorAll('input[required]').forEach(inp => {
+            inp.addEventListener('blur', () => { inp.style.borderColor = inp.value.trim() ? '#44E8A7' : '#E40166'; });
+            inp.addEventListener('input', () => { if(inp.value.trim()) inp.style.borderColor='#44E8A7'; });
+        });
+    });
+</script>
+</body>
+</html>
