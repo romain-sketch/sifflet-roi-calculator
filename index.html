@@ -1381,6 +1381,186 @@
         }
         @media (max-width: 480px) { .reasons-grid { grid-template-columns: 1fr; } }
 
+
+        /* ===================== PRINT / PDF STYLES ===================== */
+        @media print {
+            /* Hide everything except the report */
+            header,
+            .sticky-cta,
+            #introSection,
+            #heroSection,
+            #step1, #step2, #step3, #step4, #step5,
+            .progress-container,
+            .cta-buttons,
+            .button-group,
+            [onclick*="scheduleDemo"],
+            [onclick*="downloadPDF"],
+            [onclick*="startCalculator"] {
+                display: none !important;
+            }
+
+            /* Show step6 even if hidden */
+            #step6 {
+                display: block !important;
+                visibility: visible !important;
+            }
+
+            /* Page setup */
+            @page {
+                size: A4;
+                margin: 18mm 15mm;
+            }
+
+            body {
+                background: #ffffff !important;
+                color: #0d1117 !important;
+                font-family: 'DM Sans', Arial, sans-serif;
+                font-size: 11pt;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Card: white background, subtle border */
+            .card {
+                background: #ffffff !important;
+                border: 1px solid #e0e0e0 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+                margin-bottom: 20px !important;
+                padding: 20px !important;
+            }
+
+            /* Headings */
+            h1, h2, h3, h4 {
+                color: #0d1117 !important;
+                -webkit-text-fill-color: #0d1117 !important;
+            }
+
+            /* Keep brand accent colors for values */
+            .iceberg-value,
+            .roi-number,
+            .metric-value,
+            [style*="color: var(--mint-tea)"],
+            #userCompany, #userCompany2 {
+                color: #00843d !important;
+                -webkit-text-fill-color: #00843d !important;
+            }
+
+            .roi-highlight, .value-highlight {
+                color: #c40158 !important;
+                -webkit-text-fill-color: #c40158 !important;
+            }
+
+            /* Metric cards: 2-col grid, light background */
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+            }
+            .metric-card {
+                background: #f8f8f8 !important;
+                border: 1px solid #e0e0e0 !important;
+                page-break-inside: avoid;
+            }
+
+            /* Iceberg section */
+            .iceberg-container {
+                page-break-inside: avoid;
+            }
+            .water-line {
+                border-top: 2px solid #0d1117 !important;
+                background: none !important;
+            }
+            .iceberg-section {
+                background: #f4f4f4 !important;
+                border: 1px solid #e0e0e0 !important;
+            }
+            .iceberg-items li {
+                border-bottom: 1px solid #e8e8e8 !important;
+                color: #333 !important;
+            }
+            .iceberg-item-value {
+                color: #c40158 !important;
+                -webkit-text-fill-color: #c40158 !important;
+            }
+
+            /* Year projection bars */
+            .projection-bar-fill {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Cost of inaction */
+            .inaction-box {
+                background: #fff8f0 !important;
+                border: 2px solid #f97316 !important;
+            }
+
+            /* Print header: Sifflet branding */
+            #step6::before {
+                content: "SIFFLET · Data Observability ROI Report";
+                display: block;
+                font-size: 9pt;
+                color: #888;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-bottom: 16px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #e40166;
+            }
+
+            /* Footer on each page */
+            #step6::after {
+                content: "siffletdata.com · Confidential";
+                display: block;
+                font-size: 8pt;
+                color: #aaa;
+                text-align: center;
+                margin-top: 32px;
+                padding-top: 10px;
+                border-top: 1px solid #e0e0e0;
+            }
+
+            /* Page breaks */
+            .iceberg-container,
+            .projection-section,
+            .inaction-section,
+            .recommendation-section {
+                page-break-before: auto;
+                page-break-inside: avoid;
+            }
+
+            /* Remove gradients that don't print well */
+            * {
+                text-shadow: none !important;
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+
+        /* === REAL LOGO === */
+        .logo-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-img {
+            height: 32px;
+            width: auto;
+            display: block;
+            /* Invert to white for dark header */
+            filter: brightness(0) invert(1);
+            transition: opacity 0.2s;
+        }
+        .logo-link:hover .logo-img {
+            opacity: 0.8;
+        }
+        /* Print: show logo in dark blue (no filter) */
+        @media print {
+            .logo-link { display: none; }
+        }
+
     </style>
     <script src="https://js.hsforms.net/forms/embed/v2.js"></script>
 </head>
@@ -1388,10 +1568,9 @@
     <!-- Header -->
     <div class="header">
         <div class="header-content">
-            <div class="logo">
-                <div class="logo-icon"></div>
-                <span>Sifflet</span>
-            </div>
+            <a href="https://www.siffletdata.com" target="_blank" rel="noopener" class="logo-link">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIzMTUgMzkwIDEzMzUgMzAwIj4KPGRlZnM+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJzaWZmbGV0X2dyYWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iNDAxLjg1IiB5MT0iNjcyLjMwIiB4Mj0iNTkxLjIxIiB5Mj0iMzczLjkxIj4KICAgIDxzdG9wIG9mZnNldD0iMCIgc3R5bGU9InN0b3AtY29sb3I6I0ZGMDA0MjtzdG9wLW9wYWNpdHk6MC41Ii8+CiAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0eWxlPSJzdG9wLWNvbG9yOiNGRjAwNDIiLz4KICA8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+CjxnPgoJCQk8cGF0aCBmaWxsPSIjMTEzRTYwIiBkPSJNODE5LjMsNTYxLjlsLTI4LjYtNi43Yy0yMS4xLTQuNy0yMy41LTE1LTIzLjUtMjIuM2MwLTEyLjYsMTEuNi0yMSwyOC44LTIxYzE1LjcsMCwzMC43LDcuNCw0NC41LDIyCgkJCQlsMy4zLDMuNWwyNC44LTI2LjNsLTMtMy4xYy0xOS42LTIwLjQtNDIuNC0zMC43LTY3LjgtMzAuN2MtMTgsMC0zMy43LDUuMS00Ni45LDE1Yy0xMy41LDEwLjItMjAuNCwyNC4zLTIwLjQsNDEuOQoJCQkJYzAsMjksMTguNSw0OC4xLDU1LjEsNTYuOGwyNy4xLDYuM2MyNSw1LjksMjUsMTcuOSwyNSwyMS45YzAsMjEtMjUuMywyMy4zLTM2LjIsMjMuM2MtMjAuNSwwLTM3LjMtOC41LTUxLjMtMjYuMWwtMy4zLTQuMQoJCQkJbC0yNC41LDI1LjVsMi40LDMuMWMxNywyMi4yLDQ2LjYsMzUuOSw3Ny4xLDM1LjljNDMuMywwLDcyLjUtMjMuNyw3Mi41LTU5LjFDODc0LjQsNTg5LjMsODU1LjgsNTcwLjUsODE5LjMsNTYxLjl6Ii8+CgkJCTxyZWN0IHg9IjkwOS41IiB5PSI0ODEuNiIgZmlsbD0iIzExM0U2MCIgd2lkdGg9IjM2LjYiIGhlaWdodD0iMTkwLjkiLz4KCQkJPHBhdGggZmlsbD0iIzExM0U2MCIgZD0iTTExMDguMiw0NzIuNXY5LjJoLTYzLjl2LTkuMmMwLTI1LjcsOC40LTM0LjcsMzIuMi0zNC43aDE0LjJ2LTMzLjhsLTE0LjYtMC41CgkJCQljLTQ1LjQsMC02OC40LDIzLjMtNjguNCw2OS4xdjkuMmgtMjkuN1Y1MTZoMjkuN3YxNTYuNWgzNi42VjUxNmg2My45djE1Ni41aDM2LjZWNTE2aDQyLjN2LTM0LjRoLTQyLjN2LTkuMgoJCQkJYzAtMjUuNyw4LjQtMzQuNywzMi4yLTM0LjdoMTQuMnYtMzMuOGwtMTQuNi0wLjVDMTEzMS4yLDQwMy40LDExMDguMiw0MjYuNiwxMTA4LjIsNDcyLjV6Ii8+CgkJCTxyZWN0IHg9IjEyMjQuNyIgeT0iNDAzLjQiIGZpbGw9IiMxMTNFNjAiIHdpZHRoPSIzNi42IiBoZWlnaHQ9IjI2OS4yIi8+CgkJCTxwYXRoIGZpbGw9IiMxMTNFNjAiIGQ9Ik0xNDMyLjcsNDkyLjZjLTEzLjQtMTAuMi0zMC0xNS40LTQ5LjUtMTUuNGMtMjYuNCwwLTQ4LDkuOS02NCwyOS41Yy0xNS41LDE4LjktMjMuMyw0My0yMy4zLDcxLjUKCQkJCWMwLDI4LjcsOC41LDUyLjYsMjUuMyw3MWMxNywxOC4yLDQwLjEsMjcuNCw2OC42LDI3LjRjMjkuMywwLDU0LjQtMTIuMyw3NC40LTM2LjVsMi44LTMuM2wtMjUuNy0yMy43bC0zLjEsMy44CgkJCQljLTEzLjcsMTYuOC0yOS41LDI1LTQ4LjQsMjVjLTMyLDAtNTIuMy0xOC44LTU2LjItNTEuN2gxMzQuOGwwLjUtMTcuMkMxNDY5LDUzNy44LDE0NTYuNyw1MTAuNywxNDMyLjcsNDkyLjZ6IE0xMzM1LjIsNTU2LjYKCQkJCWM2LTI4LjIsMjMuNS00NC4zLDQ4LjctNDQuM2MyNS43LDAsNDMuNiwxNi44LDQ3LjYsNDQuM0gxMzM1LjJ6Ii8+CgkJCTxwYXRoIGZpbGw9IiMxMTNFNjAiIGQ9Ik0xNTk0LDUxNnYtMzQuNGgtNDIuM3YtNTAuOGgtMzYuNnY1MC44aC0yOS43VjUxNmgyOS43djk4LjZjMCw0MC4xLDE4LjIsNTguNyw1Ny4yLDU4LjcKCQkJCWM2LjgsMCwxMy4yLTAuNCwxNy40LTAuOGw0LjItMC4zdi0zMy44bC0xOSwwLjVjLTE4LjMsMC0yMy4zLTYuMS0yMy4zLTI4LjRWNTE2SDE1OTR6Ii8+CgkJPC9nPgoJCTxyZWN0IHg9IjkwOS41IiB5PSI0MDMuNCIgZmlsRkYwMDQyIi8+Cgk8L2xpbmVhckdyYWRpZW50PgoJPHBhdGggZmlsbD0idXJsKCNzaWZmbGV0X2dyYWQpIiBkPSJNNDQzLjksNDM5LjVjLTY1LDAtMTE3LjksNTIuOS0xMTcuOSwxMTcuOXM1Mi45LDExNy45LDExNy45LDExNy45YzY1LDAsMTE3LjgtNTIuOSwxMTcuOC0xMTcuOXYtNzcKCQlINDQzLjljLTQyLjUsMC03NywzNC41LTc3LDc3czM0LjUsNzcsNzcsNzdjNDIuNSwwLDc3LTM0LjUsNzctNzdjMC0xMy4xLTMuMy0yNS40LTkuMS0zNi4yaC0yNC4yYzguMiw5LjgsMTMuMSwyMi41LDEzLjEsMzYuMgoJCWMwLDMxLjMtMjUuNCw1Ni44LTU2LjgsNTYuOGMtMzEuMywwLTU2LjgtMjUuNS01Ni44LTU2LjhzMjUuNS01Ni44LDU2LjgtNTYuOGg5Ny42djU2LjhjMCw1My44LTQzCjwvc3ZnPg==" alt="Sifflet" class="logo-img" />
+            </a>
             <div class="progress-container">
                 <div class="progress-steps">
                     <div class="progress-step" id="stepLabel1">Company</div>
@@ -2130,7 +2309,7 @@
                         Schedule Demo
                     </button>
                     <button class="btn-cta-secondary" onclick="downloadPDF()">
-                        Download PDF Report
+                        🖨️ Save as PDF
                     </button>
                 </div>
             </div>
@@ -2627,7 +2806,16 @@
         }
         
         function downloadPDF() {
-            alert('PDF Report generation would be implemented here.\n\nIn production, this would:\n1. Generate a professional PDF with your branding\n2. Include all calculations and charts\n3. Send via email or download directly\n4. Track engagement in your CRM');
+            // Prepare print view
+            document.title = 'Sifflet ROI Report - ' + (document.getElementById('userCompany').textContent || 'Your Company');
+            
+            // Scroll to top first so print captures everything
+            window.scrollTo(0, 0);
+            
+            // Small delay to let scroll settle, then print
+            setTimeout(function() {
+                window.print();
+            }, 150);
         }
         
         function formatCurrency(value) {
