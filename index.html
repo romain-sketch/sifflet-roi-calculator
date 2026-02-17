@@ -1382,6 +1382,7 @@
         @media (max-width: 480px) { .reasons-grid { grid-template-columns: 1fr; } }
 
     </style>
+    <script src="https://js.hsforms.net/forms/embed/v2.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -2033,7 +2034,7 @@
                     <div class="lbr-item"><span>📋</span>Board-ready summary</div>
                     <div class="lbr-item"><span>🗺️</span>Implementation roadmap</div>
                 </div>
-                <div id="hs-form-wrapper">
+                <div id="hs-form-wrapper" style="display:block;min-height:100px;">
                     <div id="hubspot-form-target"></div>
                 </div>
                 <div class="trust-footer">
@@ -2369,6 +2370,15 @@
             
             updateProgress();
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Load HubSpot form when step 5 is shown
+            if (step === 5) {
+                setTimeout(function() {
+                    if (typeof window.loadHubSpotForm === 'function') {
+                        window.loadHubSpotForm();
+                    }
+                }, 400);
+            }
         }
         
         function prevStep(step) {
@@ -2382,6 +2392,15 @@
             
             updateProgress();
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Load HubSpot form when step 5 is shown
+            if (step === 5) {
+                setTimeout(function() {
+                    if (typeof window.loadHubSpotForm === 'function') {
+                        window.loadHubSpotForm();
+                    }
+                }, 400);
+            }
         }
         
         function updateProgress() {
@@ -2530,11 +2549,15 @@
             const costEl = document.getElementById('monthlyCost');
             if (costEl) costEl.textContent = monthly >= 1000000 ? '$'+(monthly/1000000).toFixed(1)+'M' : monthly >= 1000 ? '$'+(monthly/1000).toFixed(0)+'K' : '$'+monthly;
 
+            // Tag industry for HubSpot hidden fields
+            if (window.roiData) window.roiData.industry = selectedIndustry;
+            
             nextStep(5);
+            
             setTimeout(() => {
                 const ft = document.getElementById('hubspot-form-target');
-                if (ft) ft.scrollIntoView({ behavior:'smooth', block:'center' });
-            }, 700);
+                if (ft) ft.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 800);
         }
         
         function unlockReport(event) {
@@ -2624,17 +2647,29 @@
 </div>
 
 <!-- HUBSPOT FORMS EMBED -->
-<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
 <script>
     // ===== HUBSPOT FORM + ROI HIDDEN FIELDS =====
-    function loadHubSpotForm() {
-        if (typeof hbspt === 'undefined') { setTimeout(loadHubSpotForm, 300); return; }
+    let hubspotFormLoaded = false;
+    window.loadHubSpotForm = function loadHubSpotForm() {
+        if (hubspotFormLoaded) return;
+        if (typeof hbspt === 'undefined') { setTimeout(window.loadHubSpotForm, 300); return; }
+        
+        // Make sure the target element exists and is visible before injecting
+        const target = document.getElementById('hubspot-form-target');
+        if (!target) { setTimeout(window.loadHubSpotForm, 300); return; }
+        
+        // Clear any previous content
+        target.innerHTML = '';
+        hubspotFormLoaded = true;
+        
         hbspt.forms.create({
-            region: "na1",
+            region: "eu1",
             portalId: "24383351",
             formId: "0f80cf49-e060-4260-9c2f-f5d0ee851d5c",
             target: "#hubspot-form-target",
-            onFormReady: function() { injectROIData(); },
+            onFormReady: function($form) {
+                injectROIData();
+            },
             onFormSubmit: function() { injectROIData(); },
             onFormSubmitted: function() { showFullReport(); }
         });
@@ -2688,13 +2723,7 @@
         window.scrollTo({top:0,behavior:'smooth'});
     }
 
-    // Patch calculateROI to tag industry + load form
-    const _origCalc = calculateROI;
-    calculateROI = function() {
-        _origCalc();
-        if (window.roiData) window.roiData.industry = selectedIndustry;
-        loadHubSpotForm();
-    };
+    // Industry tagging and form loading handled directly in calculateROI and nextStep
 
     // Sticky CTA
     const stickyCta = document.getElementById('stickyCta');
@@ -2704,19 +2733,32 @@
         stickyCta.classList.toggle('visible', intro.getBoundingClientRect().bottom < window.innerHeight * 0.4);
     });
 
-    // Exit intent
+        // Exit intent
     let exitShown = false;
-    document.addEventListener('mouseleave', e => {
+    document.addEventListener('mouseleave', function(e) {
         if (e.clientY > 0 || exitShown || typeof currentStep === 'undefined' || currentStep < 2 || currentStep > 4) return;
         exitShown = true;
+        const steps = currentStep - 1;
         const o = document.createElement('div');
         o.style.cssText = 'position:fixed;inset:0;background:rgba(3,15,34,0.93);z-index:9999;display:flex;align-items:center;justify-content:center;';
-        o.innerHTML = '<div style="background:#0A1628;border:2px solid #E40166;border-radius:20px;padding:48px;max-width:460px;text-align:center;margin:20px;"><div style="font-size:52px;margin-bottom:16px;">📊</div><h3 style="font-size:26px;font-weight:800;margin-bottom:12px;color:#fff;">Wait — your progress will be lost!</h3><p style="color:#8A90A0;margin-bottom:28px;font-size:15px;line-height:1.6;">You're '+(currentStep-1)+' step'+(currentStep>2?'s':'')+' in. Finish now and get your ROI report in under 2 minutes.</p><button onclick="this.closest('div[style*=inset]').remove()" style="width:100%;padding:16px;background:#E40166;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:12px;">Continue My Calculation →</button><button onclick="this.closest('div[style*=inset]').remove()" style="width:100%;padding:10px;background:transparent;color:#8A90A0;border:none;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">No thanks, I'll lose my progress</button></div>';
+        o.innerHTML = [
+            '<div style="background:#0A1628;border:2px solid #E40166;border-radius:20px;padding:48px;max-width:460px;text-align:center;margin:20px;">',
+            '<div style="font-size:52px;margin-bottom:16px;">&#x1F4CA;</div>',
+            '<h3 style="font-size:26px;font-weight:800;margin-bottom:12px;color:#fff;">Wait - your progress will be lost!</h3>',
+            '<p style="color:#8A90A0;margin-bottom:28px;font-size:15px;line-height:1.6;">You are ' + steps + ' step' + (steps > 1 ? 's' : '') + ' in. Finish now and get your ROI report in under 2 minutes.</p>',
+            '<button id="exitContinueBtn" style="width:100%;padding:16px;background:#E40166;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:12px;">Continue My Calculation</button>',
+            '<button id="exitLeaveBtn" style="width:100%;padding:10px;background:transparent;color:#8A90A0;border:none;font-size:13px;cursor:pointer;">No thanks, I will lose my progress</button>',
+            '</div>'
+        ].join('');
         document.body.appendChild(o);
+        document.getElementById('exitContinueBtn').onclick = function() { o.remove(); };
+        document.getElementById('exitLeaveBtn').onclick = function() { o.remove(); };
     });
 
-    // Inline validation
+    // Inline validation + eager HubSpot preload
     document.addEventListener('DOMContentLoaded', () => {
+        // Pre-load HubSpot script so form renders instantly when step5 appears
+        // (form won't render until hubspot-form-target is visible)
         document.querySelectorAll('input[required]').forEach(inp => {
             inp.addEventListener('blur', () => { inp.style.borderColor = inp.value.trim() ? '#44E8A7' : '#E40166'; });
             inp.addEventListener('input', () => { if(inp.value.trim()) inp.style.borderColor='#44E8A7'; });
